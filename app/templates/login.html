@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}Symphony Sonar{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+<form method="POST" action="{{ url_for('login') }}">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.username_or_email.label }}<br>
+        {{ form.username_or_email(size=32) }}<br>
+        {% for error in form.username_or_email.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.password.label }}<br>
+        {{ form.password(size=32) }}<br>
+        {% for error in form.password.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+<p>Not a registered user? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+{% endblock %}
