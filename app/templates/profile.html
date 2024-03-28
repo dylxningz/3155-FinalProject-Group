@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+
+{% block title %}Profile Settings{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box"  style="background-color: grey; padding: 20px;">
+                <h2 style="text-align: center;">Update Your Profile</h2>
+                <form action="/update_profile" method="post">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Change your username">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Change your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Reset your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Re-enter Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Confirm your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box" style="background-color: grey; padding: 20px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                <h2 style="text-align: center;">Link Account</h2>
+                <div class="box" style="background-color: lightgray; padding: 20px; margin: 20px;">
+                    <a href="#">Link Spotify Account</a>
+                    <img src="#" alt="Spotify logo">
+                </div>
+                <div class="box" style="background-color: lightgray; padding: 20px; margin: 20px;">
+                    <a href="#">Link Soundcloud Account</a>
+                    <img src="#" alt="Soundcloud logo">
+                </div>
+                <div class="box" style="background-color: lightgray; padding: 20px; margin: 20px;">
+                    <a href="#">Link Youtube Account</a>
+                    <img src="#" alt="Youtube logo">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
