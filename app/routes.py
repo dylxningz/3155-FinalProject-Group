@@ -102,12 +102,7 @@ def dashboard():
     if 'username' in session:
         return render_template('dashboard.html', username=session['username'])
     return redirect(url_for('login'))
-
-
-
-
-
-
+  
 @app.route('/login/spotify')
 def login_spotify():
     redirect_uri = url_for('authorize_spotify', _external=True)
@@ -124,3 +119,10 @@ def authorize_spotify():
     
     return redirect(url_for('dashboard'))
 
+@app.route('/community')
+def community():
+    return render_template('community.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')

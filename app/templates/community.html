@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block title %}Community - Symphony Sonar{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Welcome to the Community!</h1>
+    <h2>Create a New Post</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" disabled>Submit</button>
+    </form>
+
+    <hr>
+
+    <h2>Community Posts</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Example Post Title</h5>
+            <p class="card-text">This is an example post content.</p>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
