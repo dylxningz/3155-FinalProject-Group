@@ -76,6 +76,10 @@ def dashboard():
     if 'username' in session:
         return render_template('dashboard.html', username=session['username'])
     return redirect(url_for('login'))
+  
+@app.route('/community')
+def community():
+    return render_template('community.html')
 
 @app.route('/profile')
 def profile():
