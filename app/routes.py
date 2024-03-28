@@ -8,6 +8,32 @@ from werkzeug.security import generate_password_hash
 from app import app, db
 from app.models import User
 from app.forms import SignupForm
+from dotenv import load_dotenv
+import os 
+from authlib.integrations.flask_client import OAuth
+
+load_dotenv()
+oauth = OAuth(app)
+
+spotify = oauth.register(
+    name="spotify",
+    client_id=os.getenv("CLIENT_ID"),
+    client_secret=os.getenv("CLIENT_SECRET"),
+    access_token_url='https://accounts.spotify.com/api/token',
+    authorize_url='https://accounts.spotify.com/authorize',
+    api_base_url='https://api.spotify.com/v1/',
+    client_kwargs={'scope': 'user-read-email user-read-private'},
+)
+
+
+
+
+
+
+
+
+
+
 
 #HOMEPAGE ROUTE
 @app.route('/')
@@ -76,3 +102,27 @@ def dashboard():
     if 'username' in session:
         return render_template('dashboard.html', username=session['username'])
     return redirect(url_for('login'))
+  
+@app.route('/login/spotify')
+def login_spotify():
+    redirect_uri = url_for('authorize_spotify', _external=True)
+    return spotify.authorize_redirect(redirect_uri)
+
+# Spotify callback route
+@app.route('/authorize/spotify')
+def authorize_spotify():
+    token = spotify.authorize_access_token()
+    resp = spotify.get('me', token=token)
+    user_info = resp.json()
+    # Just a test to see whether we can connect or not so only printing user info
+    print(user_info)
+    
+    return redirect(url_for('dashboard'))
+
+@app.route('/community')
+def community():
+    return render_template('community.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')

@@ -8,3 +8,39 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+class Genre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+
+    def __repr__(self):
+        return '<Genre %r>' % self.name
+
+class Artist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+
+    def __repr__(self):
+        return '<Artist %r>' % self.name
+
+class Album(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    release_date = db.Column(db.Date, nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
+    artist = db.relationship('Artist', backref=db.backref('albums', lazy=True))
+
+    def __repr__(self):
+        return '<Album %r>' % self.title
+
+class Song(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    album_id = db.Column(db.Integer, db.ForeignKey('album.id'), nullable=False)
+    album = db.relationship('Album', backref=db.backref('songs', lazy=True))
+    genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=True)
+    genre = db.relationship('Genre', backref=db.backref('songs', lazy=True))
+    duration = db.Column(db.Integer, nullable=False)  # Duration in seconds
+
+    def __repr__(self):
+        return '<Song %r>' % self.title
