@@ -3,6 +3,17 @@
 {% block title %}Symphony Sonar{% endblock %}
 
 {% block content %}
-    <h1>Welcome to My Website</h1>
-    <p>This is the home page content.</p>
+<div class="container-fluid h-100">
+    <div class="row align-items-center justify-content-start h-100">
+        <div class="col-auto" id="image-container1"><img src="{{ url_for('static', filename='images/radar/1-radar.png') }}" alt="" class="image"></div>
+        <div class="col-auto" id="image-container2"><img src="{{ url_for('static', filename='images/radar/2-radar.png') }}" alt="" class="image"></div>
+        <div class="col-auto" id="image-container3"><img src="{{ url_for('static', filename='images/radar/3-radar.png') }}" alt="" class="image"></div>
+        <div class="col-auto" id="image-container4"><img src="{{ url_for('static', filename='images/radar/4-radar.png') }}" alt="" class="image"></div>
+        <div class="col" id="final-text">
+            <h1>Symphony Sonar</h1>
+            <p>Dive deeper into the music and find what you love in the depths.</p>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -79,6 +79,68 @@ hr{
 
 }
 
+/*Index Page Styling/Animation (maybe will use something else)*/
+.image {
+    opacity: 0; 
+    transform: translateX(-100%); 
+    animation: slideIn 1.5s forwards;
+    margin-right: 20px; 
+}
+
+
+#image-container1 .image { animation-delay: 0s; }
+#image-container2 .image { animation-delay: 0.5s; }
+#image-container3 .image { animation-delay: 1s; }
+#image-container4 .image { animation-delay: 1.5s; }
+
+#final-text {
+    opacity: 0; 
+    transform: translateX(-100%); 
+    animation: slideInText 1.5s forwards 2s; 
+    color: var(--color-main);
+    text-align: center;
+
+}
+#final-text h1 {
+    font-size: 70px 
+}
+
+#final-text p {
+    font-size: 30px; 
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slideInText {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #final-text {
+        font-size: 3vw; 
+    }
+
+    .image {
+        width: 50%; 
+    }
+}
 /* Navbar Customization - Built off Bootstrap */
 
 .navbar{
