@@ -17,12 +17,15 @@ hr{
     margin: 20px 0;
 
 }
+/*Apply to all title at the top of pages*/
 .top-txt{
     color: var(--color-main);
     font-size: 60px;
     text-align: center;
     margin: 20px;
 }
+
+/*Apply to all buttons*/
 
 .btn-main{
     background-color: var(--color-accent);
@@ -39,6 +42,8 @@ hr{
     text-decoration: none;
 
 }
+
+/*Apply to all main forums/boxes darker purple*/
 .box-main-1{
     background-color: var(--color-main);
     color: white;
@@ -46,6 +51,8 @@ hr{
     border-radius: 10px;
     margin: 20px;
 }
+
+/*Apply to all secondary boxes in main boxes lighter purple*/
 
 .box-acc-1{
     background-color: var(--color-accent);
@@ -62,8 +69,7 @@ hr{
     cursor: pointer;
 }
 
-
-
+/*Edge case for boxes */
 .box-acc-1 span{
     font-size: 20px;
     display: block;
@@ -85,6 +91,9 @@ hr{
     transform: translateX(-100%); 
     animation: slideIn 1.5s forwards;
     margin-right: 20px; 
+}
+.anim-index{
+    margin-top: 5%;
 }
 
 
