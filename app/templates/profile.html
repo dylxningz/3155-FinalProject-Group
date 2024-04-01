@@ -3,11 +3,13 @@
 {% block title %}Profile Settings{% endblock %}
 
 {% block content %}
+<h1 class="top-txt">Profile Settings</h1>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <div class="box"  style="background-color: grey; padding: 20px;">
-                <h2 style="text-align: center;">Update Your Profile</h2>
+            <div class="box-main-1">
+                <h2 style="text-align: center;">Update Your Information</h2>
+                <hr>
                 <form action="/update_profile" method="post">
                     <div class="form-group">
                         <label for="username">Username:</label>
@@ -17,6 +19,7 @@
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Change your email">
                     </div>
+                    <hr>
                     <div class="form-group">
                         <label for="password">Password:</label>
                         <input type="password" class="form-control" id="password" name="password" placeholder="Reset your password">
@@ -25,25 +28,29 @@
                         <label for="password">Re-enter Password:</label>
                         <input type="password" class="form-control" id="password" name="password" placeholder="Confirm your password">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-main">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="box" style="background-color: grey; padding: 20px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+            <div class="box-main-1">
                 <h2 style="text-align: center;">Link Account</h2>
-                <div class="box" style="background-color: lightgray; padding: 20px; margin: 20px;">
-                    <a href="#">Link Spotify Account</a>
-                    <img src="#" alt="Spotify logo">
-                </div>
-                <div class="box" style="background-color: lightgray; padding: 20px; margin: 20px;">
-                    <a href="#">Link Soundcloud Account</a>
-                    <img src="#" alt="Soundcloud logo">
-                </div>
-                <div class="box" style="background-color: lightgray; padding: 20px; margin: 20px;">
-                    <a href="#">Link Youtube Account</a>
-                    <img src="#" alt="Youtube logo">
-                </div>
+                <a href="#" class="box-acc-1 d-flex align-items-center">
+                    <span class="mr-2">Spotify Account</span>
+                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo" >
+                </a>                
+                
+                <a href="#" class="box-acc-1 d-flex align-items-center">
+                    <span class="mr-2">Soundcloud Account</span>
+                    <img src="{{ url_for('static', filename='images/logos/soundcloud-lg.png') }}" alt="Spotify logo" >
+                </a>     
+                
+                <a href="#" class="box-acc-1 d-flex align-items-center">
+                    <span class="mr-2">Youtube Music Account</span>
+                    <img src="{{ url_for('static', filename='images/logos/youtube-lg.png') }}" alt="Spotify logo" >
+                </a>     
             </div>
         </div>
     </div>

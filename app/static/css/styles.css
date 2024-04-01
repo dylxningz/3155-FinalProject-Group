@@ -1,0 +1,179 @@
+:root {
+    --color-main: #503c5e; 
+    --color-secondary: #813a81; 
+    --color-accent: #ad8fbc; 
+    --color-accent-dark: #655172;
+    --color-background: #cdc6d2; 
+    --color-foreground: #212121; 
+    --color-success: #4caf50; 
+    --color-warning: #ffeb3b; 
+    --color-error: #f44336; 
+}
+
+/* General Styling for basic parts*/
+
+hr{
+    border: 1px solid white;
+    margin: 20px 0;
+
+}
+/*Apply to all title at the top of pages*/
+.top-txt{
+    color: var(--color-main);
+    font-size: 60px;
+    text-align: center;
+    margin: 20px;
+}
+
+/*Apply to all buttons*/
+
+.btn-main{
+    background-color: var(--color-accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-main:hover{
+    background-color: var(--color-accent-dark);
+    color: white;
+    text-decoration: none;
+
+}
+
+/*Apply to all main forums/boxes darker purple*/
+.box-main-1{
+    background-color: var(--color-main);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+/*Apply to all secondary boxes in main boxes lighter purple*/
+
+.box-acc-1{
+    background-color: var(--color-accent);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: block;
+}
+.box-acc-1:hover {
+    background-color: var(--color-accent-dark);
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*Edge case for boxes */
+.box-acc-1 span{
+    font-size: 20px;
+    display: block;
+    text-align: center;
+}
+
+.box-acc-1 img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+
+}
+
+/*Index Page Styling/Animation (maybe will use something else)*/
+.image {
+    opacity: 0; 
+    transform: translateX(-100%); 
+    animation: slideIn 1.5s forwards;
+    margin-right: 20px; 
+}
+.anim-index{
+    margin-top: 5%;
+}
+
+
+#image-container1 .image { animation-delay: 0s; }
+#image-container2 .image { animation-delay: 0.5s; }
+#image-container3 .image { animation-delay: 1s; }
+#image-container4 .image { animation-delay: 1.5s; }
+
+#final-text {
+    opacity: 0; 
+    transform: translateX(-100%); 
+    animation: slideInText 1.5s forwards 2s; 
+    color: var(--color-main);
+    text-align: center;
+
+}
+#final-text h1 {
+    font-size: 70px 
+}
+
+#final-text p {
+    font-size: 30px; 
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slideInText {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #final-text {
+        font-size: 3vw; 
+    }
+
+    .image {
+        width: 50%; 
+    }
+}
+/* Navbar Customization - Built off Bootstrap */
+
+.navbar{
+background-color: var(--color-main);
+}
+.navbar a{
+color: white;
+}
+
+.account-menu{
+    background-color: var(--color-main);
+    color: white;
+}
+.navbar-toggler {
+    border-color: #fff !important; 
+}
+
+/*Post Styling*/
+
+.post-xp-cm{
+    border-color: var(--color-accent-dark);
+    border: 4px solid var(--color-accent-dark);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: block;
+}

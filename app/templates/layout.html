@@ -6,17 +6,18 @@
     <title>{% block title %}{% endblock %}</title>
 
     <!-- "links" BEFORE REMOVAL VERIFY IT IS NO LONGER NEEDED -->
-
+   
 
 
 
 
     <!-- Bootstrap CSS link -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg">
         <a class="navbar-brand" href="/">Symphony Sonar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +59,7 @@
     </nav>
     
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
 
     {% block content %}{% endblock %}
 </div>
