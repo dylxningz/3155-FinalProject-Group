@@ -37,10 +37,11 @@
         <div class="col-md-6">
             <div class="box-main-1">
                 <h2 style="text-align: center;">Link Account</h2>
-                <a href="#" class="box-acc-1 d-flex align-items-center">
+                <a href="{{ url_for('login_spotify') }}" class="box-acc-1 d-flex align-items-center">
                     <span class="mr-2">Spotify Account</span>
-                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo" >
-                </a>                
+                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo">
+                </a>
+                            
                 
                 <a href="#" class="box-acc-1 d-flex align-items-center">
                     <span class="mr-2">Soundcloud Account</span>

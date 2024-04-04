@@ -177,3 +177,38 @@ color: white;
     margin-bottom: 20px;
     display: block;
 }
+
+
+/*Artist page Styling*/
+.artist-img {
+    margin-bottom: 20px;
+    width: 70%;
+}
+
+.artist-info{
+    background-color: var(--color-main);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+
+}
+
+.top-songs-list{
+    color: white;
+}
+.top-songs-list li{
+    background-color: var(--color-accent-dark);
+}
+.top-songs-list a{
+    color: var(--color-accent)
+}
+
