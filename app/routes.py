@@ -5,43 +5,12 @@ from app.forms import SignupForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash
+from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db
 from app.models import User
 from app.forms import SignupForm
-from dotenv import load_dotenv
-import os 
-from authlib.integrations.flask_client import OAuth
+from app import spotify, get_client_credentials_token
 import requests
-
-load_dotenv()
-oauth = OAuth(app)
-
-#used when we need to pull data from specific user on spotify// requires their consent and authentication
-
-spotify = oauth.register(
-    name="spotify",
-    client_id=os.getenv("CLIENT_ID"),
-    client_secret=os.getenv("CLIENT_SECRET"),
-    access_token_url='https://accounts.spotify.com/api/token',
-    authorize_url='https://accounts.spotify.com/authorize',
-    api_base_url='https://api.spotify.com/v1/',
-    client_kwargs={'scope': 'user-read-email user-read-private'},
-)
-#Used when we need to pull public data from spotify not pertaning to a specific user
-
-def get_client_credentials_token():
-    client_id = os.getenv("CLIENT_ID")
-    client_secret = os.getenv("CLIENT_SECRET")
-    token_url = 'https://accounts.spotify.com/api/token'
-    
-    response = requests.post(token_url, auth=(client_id, client_secret), data={'grant_type': 'client_credentials'})
-    
-    if response.status_code == 200:
-        token_info = response.json()
-        return token_info['access_token']
-    else:
-        raise Exception("Failed to obtain token")
-
 
 #HOMEPAGE ROUTE
 @app.route('/')
@@ -69,6 +38,12 @@ def forbidden(error):
     return render_template('error.html', error_status=error_status, error_message=error_message), 403
 
 
+
+
+
+
+
+
 #ACOUNT ROUTES
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -83,37 +58,44 @@ def signup():
         return redirect(url_for('login'))
     return render_template('signup.html', form=form)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # Attempt to fetch the user by username first
         user = User.query.filter((User.username == form.username_or_email.data) | (User.email == form.username_or_email.data)).first()
         if user and check_password_hash(user.password, form.password.data):
-            session['username'] = user.username
-            # Redirect to the dashboard after successful login
-            return redirect(url_for('dashboard'))
+            login_user(user)  
+            flash('Login successful.', 'success')
+            next_page = request.args.get('next')  
+            return redirect(next_page or url_for('dashboard'))  
         else:
-            # Flash a message if login was unsuccessful
             flash('Login Unsuccessful. Please check username/email and password', 'danger')
-    # Render the login template with the form
     return render_template('login.html', form=form)
 
 @app.route('/logout')
+@login_required
 def logout():
-    session.pop('username', None)
+    logout_user()
     return redirect(url_for('login'))
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
-    if 'username' in session:
-        return render_template('dashboard.html', username=session['username'])
-    return redirect(url_for('login'))
+    return render_template('dashboard.html', username=current_user.username)
+
   
 
+
+
+
+
+
+
+
+#SPOTIFY ROUTES
 # Spotify login route authentication required
 @app.route('/login/spotify')
+
 def login_spotify():
     redirect_uri = url_for('authorize_spotify', _external=True)
     return spotify.authorize_redirect(redirect_uri)
@@ -122,15 +104,34 @@ def login_spotify():
 @app.route('/authorize/spotify')
 def authorize_spotify():
     try:
+        # Exchange the code for an access token
         token = spotify.authorize_access_token()
+        
+        # Save the access token in the session for immediate use
         session['access_token'] = token['access_token']
+        
+        # Get the user's Spotify profile information to obtain their Spotify ID
+        resp = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {token["access_token"]}'})
+        if resp.ok:
+            profile = resp.json()
+            spotify_id = profile['id']
 
+            # Update the current user's profile with Spotify details
+            current_user.spotify_id = spotify_id
+            current_user.spotify_access_token = token['access_token']
+            if 'refresh_token' in token:
+                current_user.spotify_refresh_token = token['refresh_token']
+            db.session.commit()
+
+            flash('Spotify account linked successfully!', 'success')
+        else:
+            flash('Failed to fetch Spotify profile information.', 'error')
     except Exception as e:
-        flash(str(e), 'error')
-        return redirect(url_for('index'))
-    #used to make sure user is redirected to correct page and not automatically dashboard after each request
+        flash(f'Failed to link Spotify account: {str(e)}', 'error')
+    # Redirect to the next URL or default to the dashboard
     next_url = session.pop('next_url', None)
     return redirect(next_url if next_url else url_for('dashboard'))
+
 
 @app.route('/community')
 def community():
