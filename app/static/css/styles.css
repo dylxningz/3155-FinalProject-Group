@@ -22,6 +22,16 @@ hr{
     margin: 20px 0;
 
 }
+
+.form-control::placeholder { 
+    color: #b1b1b1; 
+    opacity: 1; 
+}
+
+.hr-white{
+    border: 1px solid white;
+    margin: 20px 0;
+}
 /*Apply to all title at the top of pages*/
 .top-txt{
     color: var(--color-main);
@@ -50,7 +60,8 @@ hr{
 
 /*Apply to all main forums/boxes darker purple*/
 .box-main-1{
-    background-color: var(--color-main);
+background: #B849FA;
+background: linear-gradient(135deg, #B849FA, #3B2D8E);
     color: white;
     padding: 30px;
     border-radius: 10px;
@@ -60,23 +71,64 @@ hr{
     color: var(--color-accent);
 }
 
-.account-box-fncy{
-    background: rgb(13,13,15);
-    background: linear-gradient(0deg, rgba(13,13,15,1) 0%, rgba(99,50,144,1) 50%, rgba(162,102,242,1) 100%);
+.box-main-2{
+
+    background: #B849FA;
+    background: linear-gradient(225deg, #B849FA, #3B2D8E);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+}
+.box-main-2 a{
+    color: var(--color-accent);
+}
+
+.box-main-3{
+    background: #B849FA;
+    background: linear-gradient(45deg, #B849FA, #3B2D8E);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+}
+.box-main-3 a{
+    color: var(--color-accent);
+}
+
+.box-main-4{
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+    background: #B849FA;
+    background: linear-gradient(315deg, #B849FA, #3B2D8E);
+}
+.box-main-4 a{
+    color: var(--color-accent);
+}
+
+.account-box-fncy {
+    background: linear-gradient(0deg, rgba(13, 13, 15, 0.75) 0%, rgba(99, 50, 144, 0.75) 50%, rgba(162, 102, 242, 0.75) 100%);
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: white;
     padding: 20px;
     border-radius: 10px;
-    margin-top: 10vh ;
-
+    margin-top: 10vh;
 }
 .account-box-fncy h2{
     text-align: center;
+}
+.purple a{
+    color: var(--color-main);
 }
 
 /*Apply to all secondary boxes in main boxes lighter purple*/
 
 .box-acc-1{
-    background-color: var(--color-accent);
+    background-color: var(--color-main);
     color: white;
     padding: 20px;
     border-radius: 10px;
@@ -107,26 +159,27 @@ hr{
 }
 
 /*Index Page Styling/Animation (maybe will use something else)*/
+/*will come back and make it work with all browsers and deviced, macbook looks a little weird and phones def arent right*/
 .image {
     opacity: 0;
     width: 130px;
-    /* Removed the generic animation here to assign specific ones below */
+    
 }
 
 .anim-index-left .image {
     transform: translateX(-100%);
-    animation: slideIn 1.5s forwards; /* This applies to left images */
+    animation: slideIn 1.5s forwards; 
     margin-left: -20px;;
 }
 
 .anim-index-right .image {
     transform: translateX(100%);
     animation: slideInFromRight 1.5s forwards;
-    margin-right: -20px; /* Apply the correct animation for right images */
+    margin-right: -20px; 
 }
 
 
-/* Update animation delays as per the new order, keeping your previous setup */
+
 .anim-index-left .image:nth-child(4), .anim-index-right .image:nth-child(1) { animation-delay: 1.5s; }
 .anim-index-left .image:nth-child(3), .anim-index-right .image:nth-child(2) { animation-delay: 1s; }
 .anim-index-left .image:nth-child(2), .anim-index-right .image:nth-child(3) { animation-delay: 0.5s; }
@@ -157,10 +210,11 @@ hr{
 #final-text {
     text-align: center;
     opacity: 0;
-    animation: fadeIn 2s forwards 2s; /* Keep as is for the text appearance */
+    animation: fadeIn 2s forwards 2s; 
     padding:125px;
     font-size: 30px;
     background: radial-gradient(circle at bottom center, #cb97e0 10%, #7228EC 60%, #29073F 100%);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent; 
@@ -214,11 +268,53 @@ color: var(--color-main);
 }
 
 .account-menu{
-    background-color: var(--color-main);
+    background-color: var(--color-foreground);
     color: white;
 }
 .navbar-toggler {
     border-color: #fff !important; 
+}
+
+
+/*form styling*/
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover, 
+.form-control:-webkit-autofill:focus, 
+.form-control:-webkit-autofill:active  {
+    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: rgb(48, 48, 48) !important;
+    box-shadow: 0 0 0px 1000px rgba(137, 124, 168, 0.5) inset;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+}
+
+.form-control {
+    background-color: rgba(124, 124, 124, 0.322); 
+    color: white; 
+    border: 1px solid rgba(156, 156, 156, 0.75); 
+    backdrop-filter: blur(5px); 
+    -webkit-backdrop-filter: blur(5px); 
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.6); 
+    border-color: #fff; 
+    color: white; 
+}
+
+.btn-grd{
+    background: rgba(124, 124, 124, 0.322);
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: none;
+
+}
+.form-control a{
+    color: var(--color-main);
+
 }
 
 /*Post Styling*/
@@ -273,22 +369,22 @@ color: var(--color-main);
 }
 
 .media img {
-    margin-right: 15px; /* Adjust spacing between image and text */
+    margin-right: 15px; 
 }
 
 .media-body h5 {
-    margin-bottom: 0; /* Removes bottom margin for tighter spacing */
+    margin-bottom: 0; 
 }
 
 /* Styling for the rank number */
 .rank {
-    font-size: 24px; /* Larger font size for visibility */
-    margin-right: 10px; /* Spacing between rank number and image */
+    font-size: 24px; 
+    margin-right: 10px; 
 }
 
-/* Additional styles to customize appearance further */
+
 .top-songs-cnt li, .top-artist-cnt li {
-    margin-bottom: 10px; /* Spacing between list items */
+    margin-bottom: 10px; 
 }
 
 .sidebar{
@@ -296,7 +392,7 @@ color: var(--color-main);
     top: 125px;
     bottom: auto;
     left: 20px;
-    width: 200px; /* Adjust based on sidebar content size */
+    width: 200px; 
     padding: 20px;
     color: var(--color-foreground);
 }
