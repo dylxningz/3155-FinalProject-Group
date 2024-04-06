@@ -6,7 +6,11 @@ from dotenv import load_dotenv
 import requests
 from flask_login import LoginManager
 
-
+#KEYS NEEDED
+#CLIENT_ID spotify key from dev account
+#CLIENT_SECRET spotify secret key from dev account
+#DATABASE_URL - postgresdatabase url postgresql://postgres:<password>@localhost:5432/sympthonysonaruserdb
+#SECRET_KEY not needed atm since its set up as supersecret
 
 load_dotenv()
 app = Flask(__name__)
@@ -38,7 +42,7 @@ spotify = oauth.register(
     access_token_url='https://accounts.spotify.com/api/token',
     authorize_url='https://accounts.spotify.com/authorize',
     api_base_url='https://api.spotify.com/v1/',
-    client_kwargs={'scope': 'user-read-email user-read-private'},
+    client_kwargs={'scope': 'user-read-email user-read-private user-top-read'},
 )
 #Used when we need to pull public data from spotify not pertaning to a specific user
 

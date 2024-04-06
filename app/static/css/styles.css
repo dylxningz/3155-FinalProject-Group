@@ -1,9 +1,9 @@
 :root {
-    --color-main: #503c5e; 
-    --color-secondary: #813a81; 
+    --color-main: #803cb1; 
+    --color-secondary: #602383; 
     --color-accent: #ad8fbc; 
-    --color-accent-dark: #655172;
-    --color-background: #cdc6d2; 
+    --color-accent-dark: #4e1e6e;
+    --color-background: #18141b; 
     --color-foreground: #212121; 
     --color-success: #4caf50; 
     --color-warning: #ffeb3b; 
@@ -11,6 +11,11 @@
 }
 
 /* General Styling for basic parts*/
+
+body{
+    background-color: var(--color-background);
+    color: white;
+}
 
 hr{
     border: 1px solid white;
@@ -51,6 +56,22 @@ hr{
     border-radius: 10px;
     margin: 20px;
 }
+.box-main-1 a{
+    color: var(--color-accent);
+}
+
+.account-box-fncy{
+    background: rgb(13,13,15);
+    background: linear-gradient(0deg, rgba(13,13,15,1) 0%, rgba(99,50,144,1) 50%, rgba(162,102,242,1) 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 10vh ;
+
+}
+.account-box-fncy h2{
+    text-align: center;
+}
 
 /*Apply to all secondary boxes in main boxes lighter purple*/
 
@@ -87,76 +108,109 @@ hr{
 
 /*Index Page Styling/Animation (maybe will use something else)*/
 .image {
-    opacity: 0; 
-    transform: translateX(-100%); 
-    animation: slideIn 1.5s forwards;
-    margin-right: 20px; 
-}
-.anim-index{
-    margin-top: 5%;
+    opacity: 0;
+    width: 130px;
+    /* Removed the generic animation here to assign specific ones below */
 }
 
-
-#image-container1 .image { animation-delay: 0s; }
-#image-container2 .image { animation-delay: 0.5s; }
-#image-container3 .image { animation-delay: 1s; }
-#image-container4 .image { animation-delay: 1.5s; }
-
-#final-text {
-    opacity: 0; 
-    transform: translateX(-100%); 
-    animation: slideInText 1.5s forwards 2s; 
-    color: var(--color-main);
-    text-align: center;
-
-}
-#final-text h1 {
-    font-size: 70px 
+.anim-index-left .image {
+    transform: translateX(-100%);
+    animation: slideIn 1.5s forwards; /* This applies to left images */
+    margin-left: -20px;;
 }
 
-#final-text p {
-    font-size: 30px; 
+.anim-index-right .image {
+    transform: translateX(100%);
+    animation: slideInFromRight 1.5s forwards;
+    margin-right: -20px; /* Apply the correct animation for right images */
 }
+
+
+/* Update animation delays as per the new order, keeping your previous setup */
+.anim-index-left .image:nth-child(4), .anim-index-right .image:nth-child(1) { animation-delay: 1.5s; }
+.anim-index-left .image:nth-child(3), .anim-index-right .image:nth-child(2) { animation-delay: 1s; }
+.anim-index-left .image:nth-child(2), .anim-index-right .image:nth-child(3) { animation-delay: 0.5s; }
+.anim-index-left .image:nth-child(1), .anim-index-right .image:nth-child(4) { animation-delay: 0s; }
 
 @keyframes slideIn {
-    0% {
-        opacity: 0;
-        transform: translateX(-100%); 
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0); 
-    }
-}
-
-@keyframes slideInText {
-    0% {
+    from {
         opacity: 0;
         transform: translateX(-100%);
     }
-    100% {
+    to {
         opacity: 1;
         transform: translateX(0);
     }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    #final-text {
-        font-size: 3vw; 
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
     }
-
-    .image {
-        width: 50%; 
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
+
+#final-text {
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 2s forwards 2s; /* Keep as is for the text appearance */
+    padding:125px;
+    font-size: 30px;
+    background: radial-gradient(circle at bottom center, #cb97e0 10%, #7228EC 60%, #29073F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; 
+    display: inline-block;
+    font-size: 2rem; 
+    text-align: center;
+}
+#final-text h1{
+    font-size: 75px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+html, body {
+    height: 100%;
+    margin: 0; /* Remove default margin */
+}
+
+.index-ani{
+    height: 100vh; /* Viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-button{
+    display: inline-block;
+    text-decoration: none;
+    padding-top: 50px;
+}
+.login-button a{
+    cursor: pointer;
+    text-decoration: none;
+}
+.login-button a :hover{
+    text-decoration: none;
+}
+.login-button :hover{
+    text-decoration: none;
+}
+
 /* Navbar Customization - Built off Bootstrap */
 
 .navbar{
-background-color: var(--color-main);
+background-color: var(--color-background);
 }
 .navbar a{
-color: white;
+color: var(--color-main);
 }
 
 .account-menu{
@@ -212,3 +266,52 @@ color: white;
     color: var(--color-accent)
 }
 
+
+.top-songs-cnt .media, .top-artist-cnt .media {
+    display: flex;
+    align-items: center;
+}
+
+.media img {
+    margin-right: 15px; /* Adjust spacing between image and text */
+}
+
+.media-body h5 {
+    margin-bottom: 0; /* Removes bottom margin for tighter spacing */
+}
+
+/* Styling for the rank number */
+.rank {
+    font-size: 24px; /* Larger font size for visibility */
+    margin-right: 10px; /* Spacing between rank number and image */
+}
+
+/* Additional styles to customize appearance further */
+.top-songs-cnt li, .top-artist-cnt li {
+    margin-bottom: 10px; /* Spacing between list items */
+}
+
+.sidebar{
+    position: fixed;
+    top: 125px;
+    bottom: auto;
+    left: 20px;
+    width: 200px; /* Adjust based on sidebar content size */
+    padding: 20px;
+    color: var(--color-foreground);
+}
+.sidebar a{
+    color: var(--color-main);
+    font-size: 20px;
+}
+
+.dashboard-top-txt{
+    color: var(--color-main);
+    font-size: 40px;
+    text-align: center;
+    margin: 20px;
+}
+hr{
+    border: 1px solid var(--color-main);
+    margin: 20px 0;
+}

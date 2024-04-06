@@ -39,6 +39,15 @@ def forbidden(error):
 
 
 
+def refresh_spotify_token(user_id):
+    user = User.query.get(user_id)
+    if user.spotify_refresh_token:
+        # Use Spotify's OAuth token refresh endpoint
+        token_info = spotify.refresh_token(user.spotify_refresh_token)
+        user.spotify_access_token = token_info['access_token']
+        db.session.commit()
+        return token_info['access_token']
+    return None
 
 
 
@@ -81,10 +90,42 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', username=current_user.username)
+    top_songs = []
+    top_artists = []
 
-  
+    if current_user.spotify_access_token:
+        headers = {'Authorization': f'Bearer {current_user.spotify_access_token}'}
+        
+        # Fetch top tracks
+        tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks?limit=5', headers=headers)
+        if tracks_response.ok:
+            tracks_data = tracks_response.json()
+            top_songs = [
+                {
+                    'name': track['name'],
+                    'artists': [{'name': artist['name'], 'id': artist['id']} for artist in track['artists']],
+                    'cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                    'rank': idx + 1
+                }
+                for idx, track in enumerate(tracks_data['items'])
+            ]
 
+        # Fetch top artists
+        artists_response = requests.get('https://api.spotify.com/v1/me/top/artists?limit=5', headers=headers)
+        if artists_response.ok:
+            artists_data = artists_response.json()
+            top_artists = [
+                {
+                    'name': artist['name'],
+                    'id': artist['id'],
+                    'cover': artist['images'][0]['url'] if artist['images'] else None,
+                    'genre': ', '.join(artist['genres'][:2]),  # Optionally show up to 2 genres
+                    'rank': idx + 1
+                }
+                for idx, artist in enumerate(artists_data['items'])
+            ]
+
+    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists)
 
 
 
@@ -138,6 +179,7 @@ def community():
     return render_template('community.html')
 
 @app.route('/profile')
+@login_required
 def profile():
     return render_template('profile.html')
 
