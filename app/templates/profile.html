@@ -3,6 +3,25 @@
 {% block title %}Profile Settings{% endblock %}
 
 {% block content %}
+
+<div class="sidebar">
+    <hr>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{url_for('dashboard')}}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Trends</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('profile')}}">Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+        </li>
+    </ul>
+</div>
+
 <h1 class="top-txt">Profile Settings</h1>
 <div class="container">
     <div class="row">
@@ -13,23 +32,23 @@
                 <form action="/update_profile" method="post">
                     <div class="form-group">
                         <label for="username">Username:</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Change your username">
+                        <input type="text" class="form-control white" id="username" name="username" placeholder="Change your username">
                     </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Change your email">
+                        <input type="email" class="form-control white" id="email" name="email" placeholder="Change your email">
                     </div>
                     <hr>
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Reset your password">
+                        <input type="password" class="form-control white" id="password" name="password" placeholder="Reset your password">
                     </div>
                     <div class="form-group">
                         <label for="password">Re-enter Password:</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Confirm your password">
+                        <input type="password" class="form-control white" id="password" name="password" placeholder="Confirm your password">
                     </div>
                     <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary btn-main">Submit</button>
+                    <button type="submit" class="btn btn-primary btn-main white">Submit</button>
                     </div>
                 </form>
             </div>
@@ -37,10 +56,11 @@
         <div class="col-md-6">
             <div class="box-main-1">
                 <h2 style="text-align: center;">Link Account</h2>
-                <a href="#" class="box-acc-1 d-flex align-items-center">
+                <a href="{{ url_for('login_spotify') }}" class="box-acc-1 d-flex align-items-center">
                     <span class="mr-2">Spotify Account</span>
-                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo" >
-                </a>                
+                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo">
+                </a>
+                            
                 
                 <a href="#" class="box-acc-1 d-flex align-items-center">
                     <span class="mr-2">Soundcloud Account</span>

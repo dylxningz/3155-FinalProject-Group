@@ -1,7 +1,7 @@
 {% extends 'layout.html' %} {% block title %}Sign Up{% endblock %} {% block
 content %}
 <div class="row">
-  <div class="col-md-6 offset-md-3">
+  <div class="col-md-6 offset-md-3 account-box-fncy">
     <h2 class="mb-3">Sign Up</h2>
     <form method="POST" action="{{ url_for('signup') }}">
       {{ form.hidden_tag() }}
@@ -26,16 +26,14 @@ content %}
         <div class="alert alert-danger" role="alert">{{ error }}</div>
         {% endfor %}
       </div>
-      <div class="form-group">{{ form.submit(class_="btn btn-primary") }}</div>
+      <div class="form-group">{{ form.submit(class_="btn btn-primary btn-grd") }}</div>
+      <hr />
     </form>
-    <p>Already a user? <a href="{{ url_for('login') }}">Login</a></p>
+    <p class="purple">Already a user? <a href="{{ url_for('login') }}">Login</a></p>
 
     <!-- Spotify Login Button -->
-    <hr />
-    <p>Or sign up with:</p>
-    <a href="{{ url_for('login_spotify') }}" class="btn btn-success"
-      >Login with Spotify</a
-    >
+  
+
   </div>
 </div>
 {% endblock %}
