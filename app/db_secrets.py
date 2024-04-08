@@ -10,6 +10,6 @@ DB_PORT = "5432"
 
 DB_URI = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-client_id = "1d6bfb51f16d46e995b48bd4f03777d6"
+CLIENT_ID = "1d6bfb51f16d46e995b48bd4f03777d6"
 
-client_secret = "bb32cb155f064f7a87edcbc5af0f04e7"
+CLIENT_SECRET = "bb32cb155f064f7a87edcbc5af0f04e7"
