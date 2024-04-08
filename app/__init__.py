@@ -5,9 +5,9 @@ import os
 from dotenv import load_dotenv
 import requests
 from flask_login import LoginManager
-from db_secrets import DB_URI, client_id, client_secret
-from app import routes, models
-from app.models import User  # Import your User model
+from db_secrets import DB_URI, CLIENT_ID, CLIENT_SECRET
+
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -28,7 +28,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Specify the login route
 login_manager.login_message_category = 'info'
 
-
+from app.models import User  # Import your User model
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -40,8 +40,8 @@ oauth = OAuth(app)
 
 spotify = oauth.register(
     name="spotify",
-    client_id=os.getenv("CLIENT_ID"),
-    client_secret=os.getenv("CLIENT_SECRET"),
+    client_id=os.(CLIENT_ID),
+    client_secret=(CLIENT_SECRET),
     access_token_url='https://accounts.spotify.com/api/token',
     authorize_url='https://accounts.spotify.com/authorize',
     api_base_url='https://api.spotify.com/v1/',
@@ -53,8 +53,8 @@ client_credentials_manager = SpotifyClientCredentials(client_id=client_id, clien
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def get_client_credentials_token():
-    client_id = os.getenv("CLIENT_ID")
-    client_secret = os.getenv("CLIENT_SECRET")
+    client_id=os.(CLIENT_ID)
+    client_secret=(CLIENT_SECRET)
     token_url = 'https://accounts.spotify.com/api/token'
 
     response = requests.post(token_url, auth=(client_id, client_secret), data={'grant_type': 'client_credentials'})
@@ -64,3 +64,5 @@ def get_client_credentials_token():
         return token_info['access_token']
     else:
         raise Exception("Failed to obtain token")
+        
+from app import routes, models
