@@ -12,21 +12,18 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 
-# KEYS NEEDED
-# CLIENT_ID spotify key from dev account
-# CLIENT_SECRET spotify secret key from dev account
-# DATABASE_URL - postgresdatabase url postgresql://postgres:<password>@localhost:5432/sympthonysonaruserdb
-# SECRET_KEY not needed atm since its set up as supersecret
-
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecret'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(DB_URI)
+app.config['SQLALCHEMY_DATABASE_URI'] =(DB_URI)
 db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Specify the login route
 login_manager.login_message_category = 'info'
+
+
+
 
 from app.models import User  # Import your User model
 @login_manager.user_loader
@@ -65,4 +62,4 @@ def get_client_credentials_token():
     else:
         raise Exception("Failed to obtain token")
         
-from app import routes, models
+from app import routes, models #leave at bottom of init file
