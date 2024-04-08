@@ -40,7 +40,7 @@ oauth = OAuth(app)
 
 spotify = oauth.register(
     name="spotify",
-    client_id=os.(CLIENT_ID),
+    client_id=(CLIENT_ID),
     client_secret=(CLIENT_SECRET),
     access_token_url='https://accounts.spotify.com/api/token',
     authorize_url='https://accounts.spotify.com/authorize',
@@ -49,11 +49,11 @@ spotify = oauth.register(
 )
 # Used when we need to pull public data from spotify not pertaining to a specific user
 
-client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+#client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+#sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def get_client_credentials_token():
-    client_id=os.(CLIENT_ID)
+    client_id=(CLIENT_ID)
     client_secret=(CLIENT_SECRET)
     token_url = 'https://accounts.spotify.com/api/token'
 
