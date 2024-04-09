@@ -233,3 +233,54 @@ def top_songs():
     except Exception as e:
         flash(str(e), 'error')
         return redirect(url_for('index'))
+
+
+@app.route('/users/<username>')
+def user_profile(username):
+    user = User.query.filter_by(username=username).first()
+
+    user_top_songs = []
+    user_top_artists = []
+
+    if user.spotify_access_token:
+        headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
+
+        # Fetch top tracks
+        tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks?limit=5', headers=headers)
+        if tracks_response.ok:
+            tracks_data = tracks_response.json()
+            user_top_songs = [
+                {
+                    'name': track['name'],
+                    'artists': [{'name': artist['name'], 'id': artist['id']} for artist in track['artists']],
+                    'cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                    'rank': idx + 1
+                }
+                for idx, track in enumerate(tracks_data['items'])
+            ]
+
+        # Fetch top artists
+        artists_response = requests.get('https://api.spotify.com/v1/me/top/artists?limit=5', headers=headers)
+        if artists_response.ok:
+            artists_data = artists_response.json()
+            user_top_artists = [
+                {
+                    'name': artist['name'],
+                    'id': artist['id'],
+                    'cover': artist['images'][0]['url'] if artist['images'] else None,
+                    'genre': ', '.join(artist['genres'][:2]),  # Optionally show up to 2 genres
+                    'rank': idx + 1
+                }
+                for idx, artist in enumerate(artists_data['items'])
+            ]
+
+    if user:
+        return render_template(
+            'user_profile.html',
+            user=user,
+            username=username,
+            top_songs=user_top_songs,
+            top_artists=user_top_artists)
+    else:
+        flash('User not found.', 'error')
+        return redirect(url_for('index'))

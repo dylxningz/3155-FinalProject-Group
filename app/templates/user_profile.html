@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- User Profile Container -->
+            <h2>{{ username }}'s Profile</h2>
+            <p>Username: {{ user.username }}</p>
+            <p>Email: {{ user.email }}</p>
+
+        </div>
+        <div class="col-md-4">
+            <!-- Top Songs and Top Artists Container -->
+            <div class="row">
+                <div class="col-md-12 top-songs-cnt box-main-1">
+                    <h3>{{ username }}'s Top 5 Songs:</h3>
+                    {% if top_songs %}
+                        <ul class="list-unstyled">
+                            {% for song in top_songs %}
+                                <li>
+                                    <div class="media">
+                                        <span class="rank">{{ song.rank }}.</span>
+                                        {% if song.cover %}
+                                            <img src="{{ song.cover }}" alt="{{ song.name }}" style="height: 100px; width: 100px;">
+                                        {% endif %}
+                                        <div class="media-body">
+                                            <h5 class="mt-0">{{ song.name }}</h5>
+                                            {% for artist in song.artists %}
+                                                <a href="{{ url_for('artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>You have no top songs from Spotify to display, or your Spotify account is not linked.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-12 top-artist-cnt box-main-2">
+                    <h3>{{ username }}'s Top 5 Artists:</h3>
+                    {% if top_artists %}
+                        <ul class="list-unstyled">
+                            {% for artist in top_artists %}
+                                <li>
+                                    <div class="media">
+                                        <span class="rank">{{ artist.rank }}.</span>
+                                        {% if artist.cover %}
+                                            <img src="{{ artist.cover }}" alt="{{ artist.name }}" style="height: 100px; width: 100px;">
+                                        {% endif %}
+                                        <div class="media-body">
+                                            <h5 class="mt-0"><a href="{{ url_for('artist_page', artist_id=artist.id) }}">{{ artist.name }}</a></h5>
+                                            <p>Genres: {{ artist.genre }}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>You have no top artists from Spotify to display, or your Spotify account is not linked.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
