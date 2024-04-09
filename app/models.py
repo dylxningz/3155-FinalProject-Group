@@ -50,3 +50,13 @@ class Song(db.Model):
 
     def __repr__(self):
         return '<Song %r>' % self.title
+
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    contenet = db.Column(db.Text, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeigKey('user_id'), nullable=False)
+    
+    

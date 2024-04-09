@@ -177,6 +177,12 @@ def authorize_spotify():
 @app.route('/community')
 def community():
     return render_template('community.html')
+@app.get('/create_post')
+@login_required
+def create_post():
+    return render_template('create_post.html')
+
+
 
 @app.route('/profile')
 @login_required
