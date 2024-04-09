@@ -1,24 +1,24 @@
-{% extends 'layout.html' %} {% block title %}Create Post - Symphony Sonar{%
-endblock %} {% block content %}
+{% extends 'layout.html' %} {% block title %}Create Post{% endblock %} {% block
+content %}
 <h2>Create a New Post</h2>
-<form method="POST">
-  {{ csrf_token() }}
+<form method="POST" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
   <div class="form-group">
-    <label for="title">Title:</label>
-    <input type="text" class="form-control" id="title" name="title" required />
+    {{ form.title.label(class="form-control-label") }} {{
+    form.title(class="form-control") }} {% if form.title.errors %}
+    <div class="invalid-feedback" style="display: block">
+      {{ form.title.errors[0] }}
+    </div>
+    {% endif %}
   </div>
   <div class="form-group">
-    <label for="content">Content:</label>
-    <textarea
-      class="form-control"
-      id="content"
-      name="content"
-      rows="5"
-      required
-    ></textarea>
+    {{ form.content.label(class="form-control-label") }} {{
+    form.content(class="form-control") }} {% if form.content.errors %}
+    <div class="invalid-feedback" style="display: block">
+      {{ form.content.errors[0] }}
+    </div>
+    {% endif %}
   </div>
-  <div class="d-flex justify-content-center">
-    <button type="submit" class="btn btn-primary btn-main">Submit</button>
-  </div>
+  <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
 </form>
 {% endblock %}
