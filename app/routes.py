@@ -50,8 +50,61 @@ def refresh_spotify_token(user_id):
     return None
 
 
+# fetches top artists and songs (5 of each) for a user At least I think its 5 of each, might be more :shrug:
+# separated from the dashboard route to make it easier to reuse in other routes
+def get_user_top_songs_artists(user):
+    user_top_songs = []
+    user_top_artists = []
+
+    if user.spotify_access_token:
+        headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
+
+        # Fetch top tracks
+        tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks?limit=5', headers=headers)
+        if tracks_response.ok:
+            tracks_data = tracks_response.json()
+            user_top_songs = [
+                {
+                    'name': track['name'],
+                    'artists': [{'name': artist['name'], 'id': artist['id']} for artist in track['artists']],
+                    'cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                    'rank': idx + 1
+                }
+                for idx, track in enumerate(tracks_data['items'])
+            ]
+
+        # Fetch top artists
+        artists_response = requests.get('https://api.spotify.com/v1/me/top/artists?limit=5', headers=headers)
+        if artists_response.ok:
+            artists_data = artists_response.json()
+            user_top_artists = [
+                {
+                    'name': artist['name'],
+                    'id': artist['id'],
+                    'cover': artist['images'][0]['url'] if artist['images'] else None,
+                    'genre': ', '.join(artist['genres'][:2]),  # Optionally show up to 2 genres
+                    'rank': idx + 1
+                }
+                for idx, artist in enumerate(artists_data['items'])
+            ]
+    return user_top_songs, user_top_artists
 
 
+def get_spotify_profile_picture(user):
+    headers = {
+        'Authorization': f'Bearer {user.spotify_access_token}'
+    }
+    response = requests.get('https://api.spotify.com/v1/me', headers=headers)
+    if response.status_code == 200:
+        profile_data = response.json()
+        if 'images' in profile_data and len(profile_data['images']) > 0:
+            profile_picture_url = profile_data['images'][0]['url']
+            for image in profile_data['images']:
+                if image['width'] > 200 and image['height'] > 200:
+                    profile_picture_url = image['url']
+                    break
+            return profile_picture_url
+    return None # Default profile picture if not found (replace None with suitable image later)
 
 #ACOUNT ROUTES
 
@@ -90,42 +143,13 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    top_songs = []
-    top_artists = []
+    top_songs, top_artists = get_user_top_songs_artists(current_user)
 
-    if current_user.spotify_access_token:
-        headers = {'Authorization': f'Bearer {current_user.spotify_access_token}'}
-        
-        # Fetch top tracks
-        tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks?limit=5', headers=headers)
-        if tracks_response.ok:
-            tracks_data = tracks_response.json()
-            top_songs = [
-                {
-                    'name': track['name'],
-                    'artists': [{'name': artist['name'], 'id': artist['id']} for artist in track['artists']],
-                    'cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
-                    'rank': idx + 1
-                }
-                for idx, track in enumerate(tracks_data['items'])
-            ]
-
-        # Fetch top artists
-        artists_response = requests.get('https://api.spotify.com/v1/me/top/artists?limit=5', headers=headers)
-        if artists_response.ok:
-            artists_data = artists_response.json()
-            top_artists = [
-                {
-                    'name': artist['name'],
-                    'id': artist['id'],
-                    'cover': artist['images'][0]['url'] if artist['images'] else None,
-                    'genre': ', '.join(artist['genres'][:2]),  # Optionally show up to 2 genres
-                    'rank': idx + 1
-                }
-                for idx, artist in enumerate(artists_data['items'])
-            ]
-
-    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists)
+    return render_template(
+        'dashboard.html',
+        username=current_user.username,
+        top_songs=top_songs,
+        top_artists=top_artists)
 
 
 
@@ -238,49 +262,16 @@ def top_songs():
 @app.route('/users/<username>')
 def user_profile(username):
     user = User.query.filter_by(username=username).first()
-
-    user_top_songs = []
-    user_top_artists = []
-
-    if user.spotify_access_token:
-        headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
-
-        # Fetch top tracks
-        tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks?limit=5', headers=headers)
-        if tracks_response.ok:
-            tracks_data = tracks_response.json()
-            user_top_songs = [
-                {
-                    'name': track['name'],
-                    'artists': [{'name': artist['name'], 'id': artist['id']} for artist in track['artists']],
-                    'cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
-                    'rank': idx + 1
-                }
-                for idx, track in enumerate(tracks_data['items'])
-            ]
-
-        # Fetch top artists
-        artists_response = requests.get('https://api.spotify.com/v1/me/top/artists?limit=5', headers=headers)
-        if artists_response.ok:
-            artists_data = artists_response.json()
-            user_top_artists = [
-                {
-                    'name': artist['name'],
-                    'id': artist['id'],
-                    'cover': artist['images'][0]['url'] if artist['images'] else None,
-                    'genre': ', '.join(artist['genres'][:2]),  # Optionally show up to 2 genres
-                    'rank': idx + 1
-                }
-                for idx, artist in enumerate(artists_data['items'])
-            ]
-
+    user_top_songs, user_top_artists = get_user_top_songs_artists(user)
+    profile_picture = get_spotify_profile_picture(user)
     if user:
         return render_template(
             'user_profile.html',
             user=user,
             username=username,
             top_songs=user_top_songs,
-            top_artists=user_top_artists)
+            top_artists=user_top_artists,
+            profile_picture=profile_picture)
     else:
         flash('User not found.', 'error')
         return redirect(url_for('index'))

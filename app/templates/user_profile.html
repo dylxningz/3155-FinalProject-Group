@@ -7,10 +7,15 @@
     <div class="row">
         <div class="col-md-8">
             <!-- User Profile Container -->
-            <h2>{{ username }}'s Profile</h2>
-            <p>Username: {{ user.username }}</p>
-            <p>Email: {{ user.email }}</p>
-
+            <div class="user-profile-cnt box-main-4">
+                <h2>{{ username }}'s Profile</h2>
+                <div class="profile-picture-cnt box-main-1">
+                    {% if profile_picture %}
+                        <img class="img-fluid rounded-circle" src="{{ profile_picture }}" alt="Profile Picture">
+                    {% endif %}
+                </div>
+                <h6>Email: {{ user.email }}</h6>
+            </div>
         </div>
         <div class="col-md-4">
             <!-- Top Songs and Top Artists Container -->
