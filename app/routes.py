@@ -1,14 +1,9 @@
-from flask import render_template, redirect, url_for, session
+from flask import render_template, redirect, url_for, session, request, flash
 from app import app, db
-from app.models import User
-from app.forms import SignupForm, LoginForm
+from app.models import User, Post
+from app.forms import SignupForm, LoginForm, PostForm
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template, redirect, url_for, request, flash
-from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
-from app import app, db
-from app.models import User
-from app.forms import SignupForm
 from app import spotify, get_client_credentials_token
 import requests
 
@@ -178,10 +173,26 @@ def authorize_spotify():
 def community():
     return render_template('community.html')
 
+
+@app.route('/create_post', methods=['GET', 'POST'])
+@login_required
+def create_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author_id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Post created successfully!', 'success')
+        return redirect(url_for('dashboard'))
+    else:
+        return render_template('create_post.html', form=form)
+
+
 @app.route('/profile')
 @login_required
 def profile():
     return render_template('profile.html')
+
 
 
 # Spotify routes client credentials flow (no user authentication required)
