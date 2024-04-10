@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, ValidationError
-import re  # Regular expression module for email validation
+import psycopg2
+
 
 
 class SignupForm(FlaskForm):
@@ -15,10 +16,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
 
-    def validate_username_or_email(form, field):
-        # This method should ideally be used to perform custom validation.
-        # However, for the purpose of distinguishing between a username and email,
-        # this logic may be better suited directly in the view function,
-        # as validation here would prevent form submission if the field doesn't match an email pattern,
-        # which isn't the intended behavior if usernames are allowed.
-        pass
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')    

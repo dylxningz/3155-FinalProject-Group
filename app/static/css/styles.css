@@ -1,0 +1,413 @@
+:root {
+    --color-main: #803cb1; 
+    --color-secondary: #602383; 
+    --color-accent: #ad8fbc; 
+    --color-accent-dark: #4e1e6e;
+    --color-background: #18141b; 
+    --color-foreground: #212121; 
+    --color-success: #4caf50; 
+    --color-warning: #ffeb3b; 
+    --color-error: #f44336; 
+}
+
+/* General Styling for basic parts*/
+
+body{
+    background-color: var(--color-background);
+    color: white;
+}
+
+hr{
+    border: 1px solid white;
+    margin: 20px 0;
+
+}
+
+.form-control::placeholder { 
+    color: #b1b1b1; 
+    opacity: 1; 
+}
+
+.hr-white{
+    border: 1px solid white;
+    margin: 20px 0;
+}
+/*Apply to all title at the top of pages*/
+.top-txt{
+    color: var(--color-main);
+    font-size: 60px;
+    text-align: center;
+    margin: 20px;
+}
+
+/*Apply to all buttons*/
+
+.btn-main{
+    background-color: var(--color-accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-main:hover{
+    background-color: var(--color-accent-dark);
+    color: white;
+    text-decoration: none;
+
+}
+
+/*Apply to all main forums/boxes darker purple*/
+.box-main-1{
+background: #B849FA;
+background: linear-gradient(135deg, #B849FA, #3B2D8E);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+}
+.box-main-1 a{
+    color: var(--color-accent);
+}
+
+.box-main-2{
+
+    background: #B849FA;
+    background: linear-gradient(225deg, #B849FA, #3B2D8E);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+}
+.box-main-2 a{
+    color: var(--color-accent);
+}
+
+.box-main-3{
+    background: #B849FA;
+    background: linear-gradient(45deg, #B849FA, #3B2D8E);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+}
+.box-main-3 a{
+    color: var(--color-accent);
+}
+
+.box-main-4{
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+    background: #B849FA;
+    background: linear-gradient(315deg, #B849FA, #3B2D8E);
+}
+.box-main-4 a{
+    color: var(--color-accent);
+}
+
+.account-box-fncy {
+    background: linear-gradient(0deg, rgba(13, 13, 15, 0.75) 0%, rgba(99, 50, 144, 0.75) 50%, rgba(162, 102, 242, 0.75) 100%);
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 10vh;
+}
+.account-box-fncy h2{
+    text-align: center;
+}
+.purple a{
+    color: var(--color-main);
+}
+
+/*Apply to all secondary boxes in main boxes lighter purple*/
+
+.box-acc-1{
+    background-color: var(--color-main);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: block;
+}
+.box-acc-1:hover {
+    background-color: var(--color-accent-dark);
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*Edge case for boxes */
+.box-acc-1 span{
+    font-size: 20px;
+    display: block;
+    text-align: center;
+}
+
+.box-acc-1 img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+
+}
+
+/*Index Page Styling/Animation (maybe will use something else)*/
+/*will come back and make it work with all browsers and deviced, macbook looks a little weird and phones def arent right*/
+.image {
+    opacity: 0;
+    width: 130px;
+    
+}
+
+.anim-index-left .image {
+    transform: translateX(-100%);
+    animation: slideIn 1.5s forwards; 
+    margin-left: -20px;;
+}
+
+.anim-index-right .image {
+    transform: translateX(100%);
+    animation: slideInFromRight 1.5s forwards;
+    margin-right: -20px; 
+}
+
+
+
+.anim-index-left .image:nth-child(4), .anim-index-right .image:nth-child(1) { animation-delay: 1.5s; }
+.anim-index-left .image:nth-child(3), .anim-index-right .image:nth-child(2) { animation-delay: 1s; }
+.anim-index-left .image:nth-child(2), .anim-index-right .image:nth-child(3) { animation-delay: 0.5s; }
+.anim-index-left .image:nth-child(1), .anim-index-right .image:nth-child(4) { animation-delay: 0s; }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#final-text {
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 2s forwards 2s; 
+    padding:125px;
+    font-size: 30px;
+    background: radial-gradient(circle at bottom center, #cb97e0 10%, #7228EC 60%, #29073F 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; 
+    display: inline-block;
+    font-size: 2rem; 
+    text-align: center;
+}
+#final-text h1{
+    font-size: 75px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+html, body {
+    height: 100%;
+    margin: 0; /* Remove default margin */
+}
+
+.index-ani{
+    height: 100vh; /* Viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-button{
+    display: inline-block;
+    text-decoration: none;
+    padding-top: 50px;
+}
+.login-button a{
+    cursor: pointer;
+    text-decoration: none;
+}
+.login-button a :hover{
+    text-decoration: none;
+}
+.login-button :hover{
+    text-decoration: none;
+}
+
+/* Navbar Customization - Built off Bootstrap */
+
+.navbar{
+background-color: var(--color-background);
+}
+.navbar a{
+color: var(--color-main);
+}
+
+.account-menu{
+    background-color: var(--color-foreground);
+    color: white;
+}
+.navbar-toggler {
+    border-color: #fff !important; 
+}
+
+
+/*form styling*/
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover, 
+.form-control:-webkit-autofill:focus, 
+.form-control:-webkit-autofill:active  {
+    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: rgb(48, 48, 48) !important;
+    box-shadow: 0 0 0px 1000px rgba(137, 124, 168, 0.5) inset;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+}
+
+.form-control {
+    background-color: rgba(124, 124, 124, 0.322); 
+    color: white; 
+    border: 1px solid rgba(156, 156, 156, 0.75); 
+    backdrop-filter: blur(5px); 
+    -webkit-backdrop-filter: blur(5px); 
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.6); 
+    border-color: #fff; 
+    color: white; 
+}
+
+.btn-grd{
+    background: rgba(124, 124, 124, 0.322);
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: none;
+
+}
+.form-control a{
+    color: var(--color-main);
+
+}
+
+/*Post Styling*/
+
+.post-xp-cm{
+    border-color: var(--color-accent-dark);
+    border: 4px solid var(--color-accent-dark);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+
+/*Artist page Styling*/
+.artist-img {
+    margin-bottom: 20px;
+    width: 70%;
+}
+
+.artist-info{
+    background-color: var(--color-main);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+
+}
+
+.top-songs-list{
+    color: white;
+}
+.top-songs-list li{
+    background-color: var(--color-accent-dark);
+}
+.top-songs-list a{
+    color: var(--color-accent)
+}
+
+
+.top-songs-cnt .media, .top-artist-cnt .media {
+    display: flex;
+    align-items: center;
+}
+
+.media img {
+    margin-right: 15px; 
+}
+
+.media-body h5 {
+    margin-bottom: 0; 
+}
+
+/* Styling for the rank number */
+.rank {
+    font-size: 24px; 
+    margin-right: 10px; 
+}
+
+
+.top-songs-cnt li, .top-artist-cnt li {
+    margin-bottom: 10px; 
+}
+
+.sidebar{
+    position: fixed;
+    top: 125px;
+    bottom: auto;
+    left: 20px;
+    width: 200px; 
+    padding: 20px;
+    color: var(--color-foreground);
+}
+.sidebar a{
+    color: var(--color-main);
+    font-size: 20px;
+}
+
+.dashboard-top-txt{
+    color: var(--color-main);
+    font-size: 40px;
+    text-align: center;
+    margin: 20px;
+}
+hr{
+    border: 1px solid var(--color-main);
+    margin: 20px 0;
+}

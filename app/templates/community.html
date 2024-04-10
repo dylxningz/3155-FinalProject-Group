@@ -1,0 +1,18 @@
+{% extends 'layout.html' %} {% block title %}Community - Symphony Sonar{%
+endblock %} {% block content %}
+<h1 class="top-txt">Welcome to the Community!</h1>
+<div class="container mt-4 box-main-1">
+  <a href="{{ url_for('create_post') }}" class="btn btn-primary btn-lg no-hover"
+    >Create a New Post</a
+  >
+
+  <h2 class="top-txt">Community Posts</h2>
+  <div class="card">
+    <div class="card-body post-xp-cm">
+      <h5 class="card-title post-title-cm">Example Post Title</h5>
+      <p class="card-text post-text-cm">This is an example post content.</p>
+    </div>
+  </div>
+
+  {% endblock %}
+</div>

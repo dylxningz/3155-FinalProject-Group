@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block title %}Top 50 Songs - US{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="top-txt">Top 50 Songs - US</h1>
+    <ul class="list-group mt-3 top-songs-list">
+        {% for song in top_songs %}
+            <li class="list-group-item">
+                <div class="d-flex align-items-center">
+                    <div class="mr-3">{{ loop.index }}.</div>
+                    <img src="{{ song['track']['album']['images'][0]['url'] }}" alt="Song Cover" class="mr-3" style="width: 64px; height: 64px;">
+                    <div>
+                        <h5 class="mb-0">{{ song['track']['name'] }}</h5>
+                        <p class="mb-0">by 
+                            {% for artist in song['track']['artists'] %}
+                                <a href="/artist/{{ artist['id'] }}">{{ artist['name'] }}</a>
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
