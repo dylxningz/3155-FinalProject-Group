@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
@@ -7,7 +8,6 @@ import requests
 from flask_login import LoginManager
 from db_secrets import DB_URI, CLIENT_ID, CLIENT_SECRET
 from flask_wtf.csrf import CSRFProtect
-
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -17,6 +17,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecret'
 app.config['SQLALCHEMY_DATABASE_URI'] =(DB_URI)
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Specify the login route
