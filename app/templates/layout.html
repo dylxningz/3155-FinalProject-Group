@@ -18,7 +18,11 @@
 <body>
 
     <nav class="navbar navbar-expand-lg">
+        {% if current_user.is_authenticated %}
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}">Symphony Sonar</a>
+        {% else %}
         <a class="navbar-brand" href="/">Symphony Sonar</a>
+        {% endif %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -47,7 +51,7 @@
                         {{ current_user.username }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right account-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Profile</a>
+                        <a class="dropdown-item" href="{{ url_for('user_profile', username=current_user.username) }}">Profile</a>
                         <a class="dropdown-item" href="#">+ New Post</a>
                         <a class="dropdown-item" href="{{ url_for('profile')}}">Settings</a>
                         <a class="dropdown-item" href="{{ url_for('dashboard')}}">Dashboard</a>
