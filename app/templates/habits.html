@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block title %}Listening Habits{% endblock %}
+
+{% block content %}
+<div class="sidebar">
+    <hr>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{url_for('dashboard')}}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Trends</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('profile')}}">Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+        </li>
+    </ul>
+</div>
+
+    <h2 class="dashboard-top-txt">Here are your Listening Habits, {{ username }}!</h2>
+{% endblock %}
