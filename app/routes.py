@@ -146,9 +146,10 @@ def dashboard():
         top_songs=top_songs,
         top_artists=top_artists)
 
-
-
-
+@app.get('/habits')
+@login_required
+def habits():
+    return render_template('habits.html')
 
 
 
