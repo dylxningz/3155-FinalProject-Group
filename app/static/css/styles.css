@@ -335,21 +335,33 @@ color: var(--color-main);
     width: 70%;
 }
 
-.artist-info{
+.artist-info {
     background-color: var(--color-main);
     color: white;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
     margin-top: 50px;
     margin-bottom: 20px;
-    display: block;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100%;
+}
 
+.artist-info h1 {
+    font-size: 3rem; /* Increased font size */
+    margin-top: auto; /* Position the name below the halfway point */
+}
 
+.artist-info hr {
+    width: 50%;
+    margin: 10px auto;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.artist-info p {
+    margin: 5px 0;
+    font-size: 1rem;
 }
 
 .top-songs-list{

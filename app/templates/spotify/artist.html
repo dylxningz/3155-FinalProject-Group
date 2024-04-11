@@ -1,39 +1,44 @@
 {% extends 'layout.html' %}
-
+{% block title %}
+    {{ artist.name }} - Symphony Sonar
+{% endblock %}
 {% block content %}
 <div class="container mt-4">
     
-    <div class="row mb-3">
+    <div class="row mb-3 border rounded p-3">
         <div class="col-md-6">
             {% if artist.images %}
-                <img class="artist-img"src="{{ artist.images[0].url }}" alt="Artist Image" class="img-fluid">
+                <a href="{{ artist.external_urls.spotify }}" target="_blank">
+                    <img class="artist-img img-fluid rounded-circle shadow-lg" src="{{ artist.images[0].url }}" alt="Artist Image">
+                </a>
             {% endif %}
         </div>
         <div class="col-md-6 artist-info">
-            <div>
-                <h1>{{ artist.name }}</h1>
+            <div class="text-center">
+                <h1 class="display-3 mb-4">{{ artist.name }}</h1>
                 <hr>
-                <p><strong>Genres:</strong> {{ artist.genres | join(", ") }}</p>
-                <p><strong>Followers:</strong> {{ artist.followers.total }}</p>
-                <p><strong>Popularity:</strong> {{ artist.popularity}}  </p>
+                <p>{{ artist.genres | join(", ") }}</p>
+                <p>{{ artist.followers.total }} followers</p>
+                <p>{{ artist.popularity }}<sup>th</sup> in popularity</p>
             </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            <h2>Top Tracks</h2>
+            <h2 class="h4">Top Tracks</h2>
             <ul class="list-unstyled">
                 {% for track in top_tracks %}
-                <li class="mb-2">
+                <li class="mb-3">
                     <div class="d-flex align-items-center">
                         <div class="mr-3">
-                            <img src="{{ track.album.images[0].url }}" alt="Album Cover" style="width: 64px; height: 64px;">
+                            <a href="{{ track.external_urls.spotify }}" target="_blank">
+                                <img src="{{ track.album.images[1].url }}" alt="Album Cover" class="rounded shadow" style="width: 64px; height: 64px;">
+                            </a>
                         </div>
                         <div>
                             <strong>{{ track.name }}</strong> by 
                             {{ track.artists | map(attribute='name') | join(", ") }}
-                            <a href="{{ track.external_urls.spotify }}" target="_blank">Listen on Spotify</a>
                         </div>
                     </div>
                 </li>
@@ -42,18 +47,19 @@
         </div>
 
         <div class="col-md-6 artist-as">
-            <h2>Albums</h2>
+            <h2 class="h4">Albums</h2>
             <ul class="list-unstyled">
                 {% for album in albums %}
-                <li class="mb-2">
+                <li class="mb-3">
                     <div class="d-flex align-items-center">
                         <div class="mr-3">
-                            <img src="{{ album.images[0].url }}" alt="Album Cover" style="width: 64px; height: 64px;">
+                            <a href="{{ album.external_urls.spotify }}" target="_blank">
+                                <img src="{{ album.images[1].url }}" alt="Album Cover" class="rounded shadow" style="width: 64px; height: 64px;">
+                            </a>
                         </div>
                         <div>
                             <strong>{{ album.name }}</strong><br>
                             Released: {{ album.release_date }}<br>
-                            <a href="{{ album.external_urls.spotify }}" target="_blank">Listen on Spotify</a>
                         </div>
                     </div>
                 </li>
