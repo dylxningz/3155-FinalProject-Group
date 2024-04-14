@@ -201,7 +201,9 @@ def authorize_spotify():
 #####COMMUNITY PAGE#####
 @app.get('/community')
 def community_get():
-    return render_template('community.html')
+    posts = db.session.query(Posts).order_by(Posts.date_posted.desc()).all()
+
+    return render_template('community.html',posts=posts)
 
 
 @app.post('/community')
@@ -213,7 +215,7 @@ def community_post():
     post = Posts(title=title, content=content, author_id= author)
     db.session.add(post)
     db.session.commit()
-    return render_template('community.html')
+    return redirect(url_for('community_get'))
 
 @app.route('/profile')
 @login_required
