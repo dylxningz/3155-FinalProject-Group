@@ -7,7 +7,7 @@ from flask import render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db
-from app.models import User
+from app.models import User, Posts
 from app.forms import SignupForm
 from app import spotify, get_client_credentials_token
 import requests
@@ -198,8 +198,21 @@ def authorize_spotify():
     return redirect(next_url if next_url else url_for('dashboard'))
 
 
-@app.route('/community')
-def community():
+#####COMMUNITY PAGE#####
+@app.get('/community')
+def community_get():
+    return render_template('community.html')
+
+
+@app.post('/community')
+def community_post():
+    title = request.form['title']
+    content = request.form['content']
+    author = current_user.id
+
+    post = Posts(title=title, content=content, author_id= author)
+    db.session.add(post)
+    db.session.commit()
     return render_template('community.html')
 
 @app.route('/profile')
