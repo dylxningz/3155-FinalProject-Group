@@ -217,6 +217,13 @@ def community_post():
     db.session.commit()
     return redirect(url_for('community_get'))
 
+
+#####POST PAGE######
+@app.get('/community/<post_id>')
+def view_post(post_id):
+    post = Posts.query.filter_by(id=post_id).first()
+    return render_template('post.html',post=post)
+
 @app.route('/profile')
 @login_required
 def profile():
