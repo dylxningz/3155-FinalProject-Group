@@ -16,6 +16,7 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship('Posts', backref='author', lazy=True)
     streams = db.relationship('Stream', backref='streamer', lazy=True)
+    comment = db.relationship('Comment', backref='commenter', lazy=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -59,7 +60,8 @@ class Album(db.Model):
     title = db.Column(db.String(100), nullable=False)
     release_date = db.Column(db.Date, nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
-    artist = db.relationship('Artist', backref=db.backref('albums', lazy=True))
+
+    artist = db.relationship('Artist', backref='creator', lazy=True)
 
     def __repr__(self):
         return '<Album %r>' % self.title
@@ -74,3 +76,20 @@ class Posts(db.Model):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    comment = db.relationship('Comment', backref='thread', lazy=True)
+
+
+
+
+
+
+class Comment(db.Model):
+    __tablename__ = "comment"
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
+
+

@@ -1,16 +1,16 @@
 from flask import render_template, redirect, url_for, session
 from app import app, db
-from app.models import User
 from app.forms import SignupForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db
-from app.models import User, Posts
+from app.models import User, Posts, Comment
 from app.forms import SignupForm
 from app import spotify, get_client_credentials_token
 import requests
+from sqlalchemy import desc
 
 #HOMEPAGE ROUTE
 @app.route('/')
@@ -222,12 +222,24 @@ def community_post():
 @app.get('/community/<post_id>')
 def view_post(post_id):
     post = Posts.query.filter_by(id=post_id).first()
-    return render_template('post.html',post=post)
+    comments = Comment.query.filter_by(post_id=post_id).order_by(desc(Comment.date_posted)).all()
+    return render_template('post.html',post=post,comments=comments,user=current_user)
+
+@app.post('/community/<post_id>')
+def post_comment(post_id):
+    content = request.form['comment']
+    author_id = current_user.id
+    comment = Comment(content=content,post_id=post_id,author_id=author_id)
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('view_post', post_id=post_id))
 
 @app.route('/profile')
 @login_required
 def profile():
     return render_template('profile.html')
+
+
 
 
 # Spotify routes client credentials flow (no user authentication required)
