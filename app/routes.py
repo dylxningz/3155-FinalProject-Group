@@ -1,16 +1,12 @@
-from flask import render_template, redirect, url_for, session
-from app import app, db
-from app.forms import SignupForm, LoginForm
+from flask import render_template, redirect, url_for, session, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template, redirect, url_for, request, flash
-from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
-from app import app, db
-from app.models import User, Posts, Comment
-from app.forms import SignupForm
-from app import spotify, get_client_credentials_token
+from app import app, db, spotify, get_client_credentials_token
+from app.models import User, Post, Comment  
+from app.forms import SignupForm, LoginForm, PostForm 
 import requests
 from sqlalchemy import desc
+
 
 #HOMEPAGE ROUTE
 @app.route('/')
@@ -151,9 +147,10 @@ def dashboard():
         top_songs=top_songs,
         top_artists=top_artists)
 
-
-
-
+@app.get('/habits')
+@login_required
+def habits():
+    return render_template('habits.html')
 
 
 
@@ -233,6 +230,21 @@ def post_comment(post_id):
     db.session.add(comment)
     db.session.commit()
     return redirect(url_for('view_post', post_id=post_id))
+
+
+@app.route('/create_post', methods=['GET', 'POST'])
+@login_required
+def create_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author_id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Post created successfully!', 'success')
+        return redirect(url_for('dashboard'))
+    else:
+        return render_template('create_post.html', form=form)
+
 
 @app.route('/profile')
 @login_required
