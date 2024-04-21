@@ -6,6 +6,15 @@ endblock %} {% block content %}
     >Create a New Post</a
   >
 
+    <h2 class="top-txt">Community Posts</h2>
+    {% for post in posts %}
+    <div class="container mt-4 box-main-1">
+        <div class="card-body post-xp-cm">
+            <p><a href="{{ url_for('view_post', post_id=post.id) }}">Post ID: {{ post.id }}</a></p>
+        </div>
+    </div>
+{% endfor %}
+   
   <h2 class="top-txt">Community Posts</h2>
   <div class="card">
     <div class="card-body post-xp-cm">
@@ -13,6 +22,7 @@ endblock %} {% block content %}
       <p class="card-text post-text-cm">This is an example post content.</p>
     </div>
   </div>
+
 
   {% endblock %}
 </div>

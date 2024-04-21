@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block content %} 
+<form action="/community/{{ post.id }}" method="post">
+    <h2 class="top-txt">{{ post.title }} - By: {{ post.author_id }}</h2>
+    <div class="container mt-4 box-main-1">
+        <div class="card-body post-xp-cm">
+            <p>{{ post.content }}</p>
+            <label for="comment">Your Comment:</label>
+            <textarea class="form-control" id="comment" name="comment" rows="1"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% for comment in comments %}
+    <div class="comment">
+        <a href="{{ url_for('user_profile', username=user.username) }}">{{ user.username }}: </a><p style="display: inline;">{{ comment.content }}</p>
+    </div>
+{% endfor %}
+
+{% endblock %}
