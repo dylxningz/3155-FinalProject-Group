@@ -63,5 +63,7 @@ def get_client_credentials_token():
         return token_info['access_token']
     else:
         raise Exception("Failed to obtain token")
+
+
         
 from app import routes, models #leave at bottom of init file

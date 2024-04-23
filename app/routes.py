@@ -195,21 +195,34 @@ def authorize_spotify():
     return redirect(next_url if next_url else url_for('dashboard'))
 
 
+@app.get('/terms')
+def terms():
+    return render_template('terms.html')
+
 #####COMMUNITY PAGE#####
 @app.get('/community')
 def community_get():
-    posts = db.session.query(Posts).order_by(Posts.date_posted.desc()).all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        # Using ILIKE for case-insensitive search, assuming you are using PostgreSQL
+        posts = Post.query.filter(
+            (Post.title.ilike(f'%{search_query}%')) | 
+            (Post.content.ilike(f'%{search_query}%')) | 
+            (Post.author.has(User.username.ilike(f'%{search_query}%')))
+        ).order_by(Post.date_posted.desc()).all()
+    else:
+        # Fetch all posts and order them by descending date_posted if no search query is provided
+        posts = db.session.query(Post).order_by(Post.date_posted.desc()).all()
 
-    return render_template('community.html',posts=posts)
-
-
+    return render_template('community.html', posts=posts)
 @app.post('/community')
 def community_post():
     title = request.form['title']
     content = request.form['content']
-    author = current_user.id
+    author = current_user.id  # current_user should have the id directly accessible
 
-    post = Posts(title=title, content=content, author_id= author)
+    # Create and save a new post using the correct model name 'Post'
+    post = Post(title=title, content=content, author_id=author)
     db.session.add(post)
     db.session.commit()
     return redirect(url_for('community_get'))
@@ -218,9 +231,10 @@ def community_post():
 #####POST PAGE######
 @app.get('/community/<post_id>')
 def view_post(post_id):
-    post = Posts.query.filter_by(id=post_id).first()
+    post = Post.query.filter_by(id=post_id).first()
     comments = Comment.query.filter_by(post_id=post_id).order_by(desc(Comment.date_posted)).all()
-    return render_template('post.html',post=post,comments=comments,user=current_user)
+    return render_template('post.html', post=post, comments=comments, user=current_user)
+
 
 @app.post('/community/<post_id>')
 def post_comment(post_id):

@@ -8,19 +8,36 @@
     --color-success: #4caf50; 
     --color-warning: #ffeb3b; 
     --color-error: #f44336; 
+    --color-lightcard: #bdb6d1;
 }
+
+
+
+
 
 /* General Styling for basic parts*/
 
 body{
     background-color: var(--color-background);
     color: white;
+
 }
 
 hr{
     border: 1px solid white;
     margin: 20px 0;
 
+}
+.txt-white{
+    color: white;
+}
+
+.txt-black {
+    color: black; 
+}
+
+.txt-pmain{
+    color: var(--color-main);
 }
 
 .form-control::placeholder { 
@@ -49,6 +66,10 @@ hr{
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.card{
+    background-color: var(--color-lightcard);
 }
 
 .btn-main:hover{
@@ -448,4 +469,8 @@ hr{
   align-items: center;
   color: #fff;
   font-size: 16px;
+}
+
+.side-menu{
+    padding-top: 75px;
 }

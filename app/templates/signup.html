@@ -28,12 +28,13 @@ content %}
       </div>
       <div class="form-group">{{ form.submit(class_="btn btn-primary btn-grd") }}</div>
       <hr />
+      <div class="form-group">
+        <p class="small text-muted">
+          By signing up, you agree to our <a href="{{ url_for('terms') }}">Terms and Conditions</a>.
+        </p>
+      </div>
     </form>
     <p class="purple">Already a user? <a href="{{ url_for('login') }}">Login</a></p>
-
-    <!-- Spotify Login Button -->
-  
-
   </div>
 </div>
 {% endblock %}

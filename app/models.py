@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     spotify_id = db.Column(db.String(120), unique=True, nullable=True)
     spotify_access_token = db.Column(db.String(255), nullable=True)
     spotify_refresh_token = db.Column(db.String(255), nullable=True)
+    token_expiry = db.Column(db.DateTime, nullable=True)
 
     posts = db.relationship('Post', backref='author', lazy=True)
     streams = db.relationship('Stream', backref='streamer', lazy=True)
@@ -65,7 +66,7 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post', lazy=True)
 
 class Comment(db.Model):
-    __tablename__ = "comments"
+    __tablename__ = "comment"
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)

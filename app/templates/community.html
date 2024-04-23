@@ -1,28 +1,52 @@
-{% extends 'layout.html' %} {% block title %}Community - Symphony Sonar{%
-endblock %} {% block content %}
-<h1 class="top-txt">Welcome to the Community!</h1>
-<div class="container mt-4 box-main-1">
-  <a href="{{ url_for('create_post') }}" class="btn btn-primary btn-lg no-hover"
-    >Create a New Post</a
-  >
+{% extends 'layout.html' %}
+{% block title %}Community - Symphony Sonar{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-9">
+            <h1 >Welcome to the Community!</h1>
+            <hr>
+            <h2 class="mt-4">Posts</h2>
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ url_for('view_post', post_id=post.id) }}" class="stretched-link">
+                                    {{ post.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text txt-black">{{ post.content | truncate(120) }}</p>
+                            <small class="text-muted">Posted by {{ post.author.username }} on {{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No posts to display. Be the first to create a post!</p>
+            {% endif %}
+        </div>
 
-    <h2 class="top-txt">Community Posts</h2>
-    {% for post in posts %}
-    <div class="container mt-4 box-main-1">
-        <div class="card-body post-xp-cm">
-            <p><a href="{{ url_for('view_post', post_id=post.id) }}">Post ID: {{ post.id }}</a></p>
+        <div class="col-md-3 txt-pmain side-menu">
+            <div class="mb-3 text-center">
+                <a href="{{ url_for('create_post') }}" class="btn-main">
+                    Create a New Post +
+                </a>
+            </div>
+            <div class="mb-3">
+                <h3>Filter Posts</h3>
+                <form method="GET" action="{{ url_for('community_get') }}">
+                    <div class="mb-3">
+                        <input type="text" name="search" class="form-control" placeholder="Search posts..." value="{{ request.args.get('search', '') }}">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Search</button>
+                </form>
+                
+            </div>
+            <div>
+                <h3>Community Guidelines</h3>
+                <p>Be respectful and ensure your posts adhere to our community guidelines.</p>
+            </div>
         </div>
     </div>
-{% endfor %}
-   
-  <h2 class="top-txt">Community Posts</h2>
-  <div class="card">
-    <div class="card-body post-xp-cm">
-      <h5 class="card-title post-title-cm">Example Post Title</h5>
-      <p class="card-text post-text-cm">This is an example post content.</p>
-    </div>
-  </div>
-
-
-  {% endblock %}
 </div>
+{% endblock %}
