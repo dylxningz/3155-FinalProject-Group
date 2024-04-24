@@ -260,6 +260,32 @@ def create_post():
         return render_template('create_post.html', form=form)
 
 
+@app.post('/community/<post_id>/delete')
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+
+    # check post author
+    if post.author_id != current_user.id:
+        flash('You are not authorized to delete this post', 'error')
+        return redirect(url_for('view_post', post_id=post_id))
+
+
+    # delete comments associated with post
+    for comment in post.comments:
+        db.session.delete(comment)
+
+
+    db.session.delete(post)
+    db.session.commit()
+
+
+    flash('Post deleted successfully', 'success')
+    return redirect(url_for('community_get'))
+
+
+
 @app.route('/profile')
 @login_required
 def profile():
