@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import requests
 from flask_login import LoginManager
 from db_secrets import DB_URI, CLIENT_ID, CLIENT_SECRET
-from flask_wtf.csrf import CSRFProtect
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -23,7 +23,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Specify the login route
 login_manager.login_message_category = 'info'
-csrf = CSRFProtect(app) # CSRF protection
+
 
 
 

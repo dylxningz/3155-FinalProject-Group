@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db, spotify, get_client_credentials_token
 from app.models import User, Post, Comment  
-from app.forms import SignupForm, LoginForm, PostForm 
+from app.forms import SignupForm, LoginForm, PostForm
 import requests
 from sqlalchemy import desc
 
@@ -255,9 +255,68 @@ def create_post():
         db.session.add(post)
         db.session.commit()
         flash('Post created successfully!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('community_get'))
     else:
         return render_template('create_post.html', form=form)
+
+
+@app.post('/community/<post_id>/delete')
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+
+    # check post author
+    if post.author_id != current_user.id:
+        flash('You are not authorized to delete this post', 'error')
+        return redirect(url_for('view_post', post_id=post_id))
+
+
+    for comment in post.comments:
+        db.session.delete(comment)
+
+
+    db.session.delete(post)
+    db.session.commit()
+
+
+    flash('Post deleted successfully', 'success')
+    return redirect(url_for('community_get'))
+
+
+
+@app.get('/community/<post_id>/edit')
+@login_required
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author_id != current_user.id:
+        flash('You are not authorized to edit this post', 'error')
+        return redirect(url_for('view_post', post_id=post.id))
+
+    return render_template('edit_post.html', title='Edit Post', post=post) 
+
+@app.post('/community/<post_id>/edit')
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author_id != current_user.id:
+        flash('You are not authorized to edit this post', 'error')
+        return redirect(url_for('view_post', post_id=post.id))
+    
+    new_title = request.form['title']
+    new_content = request.form['content']
+    post.title = new_title 
+    post.content = new_content
+
+    db.session.commit()
+
+    flash('Your post has been updated!', 'success')
+    return redirect(url_for('community_get', post_id=post.id)) 
+
+
+
+
+
 
 
 @app.route('/profile')
