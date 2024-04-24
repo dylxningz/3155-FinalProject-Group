@@ -358,7 +358,9 @@ def artist_page(artist_id):
         return redirect(url_for('index'))
     
 
+# Modified the `/top-songs` route to include user's top songs and artists
 @app.route('/top-songs')
+@login_required  
 def top_songs():
     try:
         access_token = get_client_credentials_token()
@@ -369,13 +371,23 @@ def top_songs():
         
         if response.status_code == 200:
             top_songs = response.json()['items'][:50]  # Limit to top 50 songs
-            return render_template('spotify/top_songs.html', top_songs=top_songs)
+
+            # Get the user's top songs and artists
+            user_top_songs, user_top_artists = get_user_top_songs_artists(current_user)
+
+            return render_template(
+                'spotify/top_songs.html',
+                top_songs=top_songs,
+                user_top_songs=user_top_songs,
+                user_top_artists=user_top_artists
+            )
         else:
             flash('Failed to fetch top songs from Spotify.', 'error')
             return redirect(url_for('index'))
     except Exception as e:
         flash(str(e), 'error')
         return redirect(url_for('index'))
+
 
 
 @app.route('/users/<username>')
