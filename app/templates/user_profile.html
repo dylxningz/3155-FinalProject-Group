@@ -15,6 +15,24 @@
                     {% endif %}
                 </div>
                 <h6>Email: {{ user.email }}</h6>
+                {% if spotify_info %}
+                    <div class="spotify-info-section">
+                        <h3>Spotify Information</h3>
+                        {% if spotify_info.is_currently_listening %}
+                            <p>Currently Listening:</p>
+                            <p>Song: {{ spotify_info.current_song.name }}</p>
+                            <p>Artist: {{ spotify_info.current_song.artist }}</p>
+                            <img src="{{ spotify_info.current_song.cover }}" alt="Song Cover" style="height: 100px; width: 100px;">
+                            <p>Timestamp: {{ spotify_info.current_song.timestamp }}</p>
+                            <p>End Time: {{ spotify_info.current_song.end_time }}</p>
+                        {% else %}
+                            <p>Not currently listening to any song.</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p>Not on Spotify.</p>
+                {% endif %}
+
             </div>
         </div>
         <div class="col-md-4">
