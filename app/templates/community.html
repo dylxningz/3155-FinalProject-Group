@@ -12,7 +12,7 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{{ url_for('view_post', post_id=post.id) }}" class="stretched-link">
+                                <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="stretched-link">
                                     {{ post.title }}
                                 </a>
                             </h5>
@@ -28,13 +28,13 @@
 
         <div class="col-md-3 txt-pmain side-menu">
             <div class="mb-3 text-center">
-                <a href="{{ url_for('create_post') }}" class="btn-main">
+                <a href="{{ url_for('community.create_post') }}" class="btn-main">
                     Create a New Post +
                 </a>
             </div>
             <div class="mb-3">
                 <h3>Filter Posts</h3>
-                <form method="GET" action="{{ url_for('community_get') }}">
+                <form method="GET" action="{{ url_for('community.community_get') }}">
                     <div class="mb-3">
                         <input type="text" name="search" class="form-control" placeholder="Search posts..." value="{{ request.args.get('search', '') }}">
                     </div>

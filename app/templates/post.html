@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>{{ post.title }} - By: <a href="{{ url_for('user_profile', username=post.author.username) }}">{{ post.author.username }}</a></h2>
+    <h2>{{ post.title }} - By: <a href="{{ url_for('profile.user_profile', username=post.author.username) }}">{{ post.author.username }}</a></h2>
     <div class="card mt-3">
         <div class="card-body txt-black">
             <p class="card-text">{{ post.content }}</p>
@@ -17,12 +17,12 @@
 {% if current_user and current_user.id == post.author_id %} 
     <div class="text-end d-flex"> 
         <div class="col-auto">
-            <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+            <form action="{{ url_for('community.delete_post', post_id=post.id) }}" method="POST">
                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
             </form>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-sm btn-outline-primary ">Edit</a> 
+            <a href="{{ url_for('community.edit_post', post_id=post.id) }}" class="btn btn-sm btn-outline-primary ">Edit</a> 
         </div>
     </div>
 {% endif %}
@@ -36,7 +36,7 @@
             <div class="card mb-2">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">
-                        <a href="{{ url_for('user_profile', username=comment.commenter.username) }}">
+                        <a href="{{ url_for('profile.user_profile', username=comment.commenter.username) }}">
                             {{ comment.commenter.username }}
                         </a>
                     </h6>
@@ -54,7 +54,7 @@
             Leave a Comment
         </div>
         <div class="card-body">
-            <form action="/community/{{ post.id }}" method="post">
+            <form action="{{ url_for('community.view_post', post_id=post.id) }}" method="post">
                 <div class="mb-3">
                     <label for="comment" class="form-label">Your Comment:</label>
                     <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
