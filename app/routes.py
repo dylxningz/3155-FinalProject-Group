@@ -6,6 +6,51 @@ from app.models import User, Post, Comment
 from app.forms import SignupForm, LoginForm, PostForm
 import requests
 from sqlalchemy import desc
+from datetime import datetime, timedelta
+import pytz
+from db_secrets import CLIENT_ID, CLIENT_SECRET
+
+
+def is_token_expired(user):
+    utc = pytz.UTC  # Define UTC timezone
+    if user.token_expiry:
+        current_time = datetime.now(pytz.utc)  
+        if user.token_expiry.tzinfo is None or user.token_expiry.tzinfo.utcoffset(user.token_expiry) is None:
+            user.token_expiry = utc.localize(user.token_expiry)  
+        return current_time >= user.token_expiry - timedelta(minutes=5)
+    return True
+
+def refresh_spotify_token(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        raise ValueError("User not found")
+
+    if user.spotify_refresh_token:
+        refresh_url = 'https://accounts.spotify.com/api/token'
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        data = {
+            'grant_type': 'refresh_token',
+            'refresh_token': user.spotify_refresh_token,
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET
+        }
+        response = requests.post(refresh_url, headers=headers, data=data)
+        if response.status_code == 200:
+            token_info = response.json()
+            user.spotify_access_token = token_info['access_token']
+            if 'expires_in' in token_info:
+                user.token_expiry = datetime.utcnow() + timedelta(seconds=token_info['expires_in'])
+            db.session.commit()
+            return token_info['access_token']
+        else:
+            raise Exception("Failed to refresh token")
+    return None
+
+
+def get_spotify_access_token(user):
+    if is_token_expired(user):
+        return refresh_spotify_token(user.id)
+    return user.spotify_access_token
 
 
 #HOMEPAGE ROUTE
@@ -32,18 +77,6 @@ def forbidden(error):
     error_status = 403
     error_message = "Forbidden"
     return render_template('error.html', error_status=error_status, error_message=error_message), 403
-
-
-
-def refresh_spotify_token(user_id):
-    user = User.query.get(user_id)
-    if user.spotify_refresh_token:
-        # Use Spotify's OAuth token refresh endpoint
-        token_info = spotify.refresh_token(user.spotify_refresh_token)
-        user.spotify_access_token = token_info['access_token']
-        db.session.commit()
-        return token_info['access_token']
-    return None
 
 
 # fetches top artists and songs (5 of each) for a user At least I think its 5 of each, might be more :shrug:
@@ -139,13 +172,10 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    access_token = get_spotify_access_token(current_user)
     top_songs, top_artists = get_user_top_songs_artists(current_user)
+    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists)
 
-    return render_template(
-        'dashboard.html',
-        username=current_user.username,
-        top_songs=top_songs,
-        top_artists=top_artists)
 
 @app.get('/habits')
 @login_required
@@ -157,7 +187,6 @@ def habits():
 #SPOTIFY ROUTES
 # Spotify login route authentication required
 @app.route('/login/spotify')
-
 def login_spotify():
     redirect_uri = url_for('authorize_spotify', _external=True)
     return spotify.authorize_redirect(redirect_uri)
@@ -166,33 +195,29 @@ def login_spotify():
 @app.route('/authorize/spotify')
 def authorize_spotify():
     try:
-        # Exchange the code for an access token
         token = spotify.authorize_access_token()
-        
-        # Save the access token in the session for immediate use
-        session['access_token'] = token['access_token']
-        
-        # Get the user's Spotify profile information to obtain their Spotify ID
-        resp = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {token["access_token"]}'})
-        if resp.ok:
-            profile = resp.json()
-            spotify_id = profile['id']
+        if not token:
+            raise Exception("No token retrieved from Spotify")
 
-            # Update the current user's profile with Spotify details
-            current_user.spotify_id = spotify_id
-            current_user.spotify_access_token = token['access_token']
-            if 'refresh_token' in token:
-                current_user.spotify_refresh_token = token['refresh_token']
+        current_user.spotify_access_token = token['access_token']
+        current_user.spotify_id = None  # Reset Spotify ID in case of reauthorization
+        current_user.spotify_refresh_token = token.get('refresh_token', current_user.spotify_refresh_token)
+        current_user.token_expiry = datetime.now() + timedelta(seconds=token['expires_in'])
+
+        profile_response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': f'Bearer {token["access_token"]}'})
+        if profile_response.ok:
+            profile = profile_response.json()
+            current_user.spotify_id = profile['id']
             db.session.commit()
-
             flash('Spotify account linked successfully!', 'success')
         else:
+            db.session.rollback()
             flash('Failed to fetch Spotify profile information.', 'error')
     except Exception as e:
         flash(f'Failed to link Spotify account: {str(e)}', 'error')
-    # Redirect to the next URL or default to the dashboard
-    next_url = session.pop('next_url', None)
-    return redirect(next_url if next_url else url_for('dashboard'))
+
+    next_url = session.pop('next_url', url_for('dashboard'))
+    return redirect(next_url)
 
 
 @app.get('/terms')

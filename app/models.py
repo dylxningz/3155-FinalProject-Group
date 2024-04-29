@@ -1,6 +1,8 @@
 from app import db
 from flask_login import UserMixin
 from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, String, DateTime
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -11,7 +13,7 @@ class User(db.Model, UserMixin):
     spotify_id = db.Column(db.String(120), unique=True, nullable=True)
     spotify_access_token = db.Column(db.String(255), nullable=True)
     spotify_refresh_token = db.Column(db.String(255), nullable=True)
-    token_expiry = db.Column(db.DateTime, nullable=True)
+    token_expiry = Column(DateTime(timezone=True), nullable=True)
 
     posts = db.relationship('Post', backref='author', lazy=True)
     streams = db.relationship('Stream', backref='streamer', lazy=True)
@@ -25,7 +27,6 @@ class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_song_id = db.Column(db.String(22), nullable=False)
     num_streams = db.Column(db.Integer, nullable=False)
-    # Assuming songs are related to streams
     streams = db.relationship('Stream', backref='song', lazy=True)
 
     def __repr__(self):
@@ -44,7 +45,6 @@ class Stream(db.Model):
 class Artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
-    # Reintegrating Album as the relationship makes sense for an Artist
     albums = db.relationship('Album', backref='artist', lazy=True)
 
     def __repr__(self):
