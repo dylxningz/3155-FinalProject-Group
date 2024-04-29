@@ -5,78 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
 
-    <!-- "links" BEFORE REMOVAL VERIFY IT IS NO LONGER NEEDED -->
-   
-
-
-
-
     <!-- Bootstrap CSS link -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg">
-        {% if current_user.is_authenticated %}
-        <a class="navbar-brand" href="{{ url_for('dashboard') }}">Symphony Sonar</a>
-        {% else %}
-        <a class="navbar-brand" href="/">Symphony Sonar</a>
-        {% endif %}
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('top_songs') }}">Top Songs <span class="sr-only">(current)</span></a>
+<nav class="navbar navbar-expand-lg">
+    {% if current_user.is_authenticated %}
+    <a class="navbar-brand" href="{{ url_for('profile.dashboard') }}">Symphony Sonar</a>
+    {% else %}
+    <a class="navbar-brand" href="{{ url_for('main.index') }}">Symphony Sonar</a>
 
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('community_get') }}">Community</a>
-                </li>
+    {% endif %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-                {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('habits') }}">Habits</a>
-                </li>
-                {% endif %}
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                {% if current_user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ current_user.username }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right account-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url_for('user_profile', username=current_user.username) }}">Profile</a>
-                        <a class="dropdown-item" href="#">+ New Post</a>
-                        <a class="dropdown-item" href="{{ url_for('profile')}}">Settings</a>
-                        <a class="dropdown-item" href="{{ url_for('dashboard')}}">Dashboard</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
-                    </div>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('login') }}">Login/Sign Up</a>
-                </li>
-                {% endif %}
-            </ul>
-            
-        </div>
-    </nav>
-    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('spotifyroutes.top_songs') }}">Top Songs <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('community.community_get') }}">Community</a>
+            </li>
+
+            {% if current_user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile.dashboard') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile.habits') }}">Habits</a>
+            </li>
+            {% endif %}
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ current_user.username }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right account-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{{ url_for('profile.user_profile', username=current_user.username) }}">Profile</a>
+                    <a class="dropdown-item" href="#">+ New Post</a>
+                    <a class="dropdown-item" href="{{ url_for('profile.settings')}}">Settings</a>
+                    <a class="dropdown-item" href="{{ url_for('profile.dashboard')}}">Dashboard</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
+                </div>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.login') }}">Login/Sign Up</a>
+            </li>
+            {% endif %}
+        </ul>
+        
+    </div>
+</nav>
 
 <div class="container-fluid mt-4">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div id="flash-messages">
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
     {% block content %}{% endblock %}
 </div>
+
 
 
 <!-- "scripts"  -->
@@ -88,5 +96,16 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <!-- Bootstrap JS links -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        setTimeout(function() {
+            $("#flash-messages .alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 6000);
+    });
+</script>
+
 </body>
+
 </html>

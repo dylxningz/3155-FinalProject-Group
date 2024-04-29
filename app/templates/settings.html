@@ -8,16 +8,16 @@
     <hr>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link active" href="{{url_for('dashboard')}}">Dashboard</a>
+            <a class="nav-link active" href="{{url_for('profile.dashboard')}}">Dashboard</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#">Trends</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{url_for('profile')}}">Settings</a>
+            <a class="nav-link" href="{{url_for('profile.settings')}}">Settings</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+            <a class="nav-link" href="{{url_for('auth.logout')}}">Logout</a>
         </li>
     </ul>
 </div>
@@ -56,7 +56,7 @@
         <div class="col-md-6">
             <div class="box-main-1">
                 <h2 style="text-align: center;">Link Account</h2>
-                <a href="{{ url_for('login_spotify') }}" class="box-acc-1 d-flex align-items-center">
+                <a href="{{ url_for('spotifyroutes.login_spotify') }}" class="box-acc-1 d-flex align-items-center">
                     <span class="mr-2">Spotify Account</span>
                     <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo">
                 </a>   

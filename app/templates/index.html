@@ -20,7 +20,7 @@
         <div class="col-auto" id="final-text">
             <h1>Symphony Sonar</h1>
             <p>Dive into the Depths of music</p>
-            <a href="/login" class="login-button">Login &rarr;</a>
+            <a href="{{ url_for('auth.login') }}" class="login-button">Login &rarr;</a>
         </div>
         <div class="col-auto anim-index-right">
             <img src="{{ url_for('static', filename='images/radar/right-xl.png') }}" alt="" class="image image-right">

@@ -8,62 +8,46 @@ import requests
 from flask_login import LoginManager
 from db_secrets import DB_URI, CLIENT_ID, CLIENT_SECRET
 
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-
-
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecret'
-app.config['SQLALCHEMY_DATABASE_URI'] =(DB_URI)
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 db = SQLAlchemy(app)
-
 migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'  # Specify the login route
+login_manager.login_view = 'auth.login'  
 login_manager.login_message_category = 'info'
 
-
-
-
-from app.models import User  # Import your User model
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
 oauth = OAuth(app)
-
-# used when we need to pull data from specific user on spotify// requires their consent and authentication
-
 spotify = oauth.register(
     name="spotify",
-    client_id=(CLIENT_ID),
-    client_secret=(CLIENT_SECRET),
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
     access_token_url='https://accounts.spotify.com/api/token',
     authorize_url='https://accounts.spotify.com/authorize',
     api_base_url='https://api.spotify.com/v1/',
-    client_kwargs={'scope': 'user-read-email user-read-private user-top-read'},
+    client_kwargs={'scope': 'user-read-email user-read-private user-top-read'}
 )
-# Used when we need to pull public data from spotify not pertaining to a specific user
 
-#client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-#sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
-def get_client_credentials_token():
-    client_id=(CLIENT_ID)
-    client_secret=(CLIENT_SECRET)
-    token_url = 'https://accounts.spotify.com/api/token'
-
-    response = requests.post(token_url, auth=(client_id, client_secret), data={'grant_type': 'client_credentials'})
-
-    if response.status_code == 200:
-        token_info = response.json()
-        return token_info['access_token']
-    else:
-        raise Exception("Failed to obtain token")
+@login_manager.user_loader
+def load_user(user_id):
+    from app.models import User 
+    return User.query.get(int(user_id))
 
 
-        
-from app import routes, models #leave at bottom of init file
+from app.auth import auth as auth_blueprint
+from app.community import community as community_blueprint
+from app.errors import errors as errors_blueprint
+from app.profile import profile as profile_blueprint
+from app.spotifyroutes import spotifyroutes as spotifyroutes_blueprint
+from app.main import main as main_blueprint
+app.register_blueprint(main_blueprint)
+
+
+# Register Blueprints
+app.register_blueprint(auth_blueprint)
+app.register_blueprint(community_blueprint)
+app.register_blueprint(errors_blueprint)
+app.register_blueprint(profile_blueprint)
+app.register_blueprint(spotifyroutes_blueprint)

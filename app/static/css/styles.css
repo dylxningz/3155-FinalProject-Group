@@ -474,3 +474,18 @@ hr{
 .side-menu{
     padding-top: 75px;
 }
+
+#flash-messages {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -300%);
+    z-index: 9999;
+    width: auto;
+    padding: 0 20px;
+}
+
+.alert {
+    display: inline-block;
+    max-width: 100%;
+}

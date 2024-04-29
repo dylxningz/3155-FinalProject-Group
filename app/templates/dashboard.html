@@ -8,16 +8,16 @@
     <hr>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link active" href="{{url_for('dashboard')}}">Dashboard</a>
+            <a class="nav-link active" href="{{url_for('profile.dashboard')}}">Dashboard</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#">Trends</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{url_for('profile')}}">Settings</a>
+            <a class="nav-link" href="{{url_for('profile.settings')}}">Settings</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+            <a class="nav-link" href="{{url_for('auth.logout')}}">Logout</a>
         </li>
     </ul>
 </div>
@@ -41,7 +41,7 @@
                                 <div class="media-body">
                                     <h5 class="mt-0">{{ song.name }}</h5>
                                     {% for artist in song.artists %}
-                                        <a href="{{ url_for('artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
+                                        <a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                                     <img src="{{ artist.cover }}" alt="{{ artist.name }}" style="height: 100px; width: 100px;"> 
                                 {% endif %}
                                 <div class="media-body">
-                                    <h5 class="mt-0"><a href="{{ url_for('artist_page', artist_id=artist.id) }}">{{ artist.name }}</a></h5>
+                                    <h5 class="mt-0"><a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a></h5>
                                     <p>Genres: {{ artist.genre }}</p>
                                 </div>
                             </div>

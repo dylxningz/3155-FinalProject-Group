@@ -3,7 +3,7 @@ content %}
 <div class="row">
   <div class="col-md-6 offset-md-3 account-box-fncy">
     <h2 class="mb-3">Sign Up</h2>
-    <form method="POST" action="{{ url_for('signup') }}">
+    <form method="POST" action="{{ url_for('auth.signup') }}">
       {{ form.hidden_tag() }}
       <div class="form-group">
         {{ form.username.label(class_="form-control-label") }} {{
@@ -30,11 +30,11 @@ content %}
       <hr />
       <div class="form-group">
         <p class="small text-muted">
-          By signing up, you agree to our <a href="{{ url_for('terms') }}">Terms and Conditions</a>.
+          By signing up, you agree to our <a href="{{ url_for('main.terms') }}">Terms and Conditions</a>.
         </p>
       </div>
     </form>
-    <p class="purple">Already a user? <a href="{{ url_for('login') }}">Login</a></p>
+    <p class="purple">Already a user? <a href="{{ url_for('auth.login') }}">Login</a></p>
   </div>
 </div>
 {% endblock %}
