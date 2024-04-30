@@ -76,7 +76,26 @@
                 <p>You have no top artists from Spotify to display, or your Spotify account is not linked.</p>
             {% endif %}
         </div>
-        
+        <div class="col-md-12 mt-4">
+            <h3>Your Posts:</h3>
+            {% if user_posts %}
+                <div class="list-group">
+                    {% for post in user_posts %}
+                        <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ post.title }}</h5>
+                                <small>{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ post.content | truncate(150) }}</p>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You have not created any posts yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
         
         
     </div>
