@@ -19,6 +19,7 @@ class LoginForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
+    spotify_song_id = StringField('Spotify Song ID')
     submit = SubmitField('Post')   
     
     

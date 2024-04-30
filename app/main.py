@@ -9,3 +9,4 @@ def index():
 @main.route('/terms')
 def terms():
     return render_template('terms.html')
+
