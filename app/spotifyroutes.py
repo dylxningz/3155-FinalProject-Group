@@ -1,9 +1,10 @@
-from flask import Blueprint, request, redirect, url_for, session, flash, render_template
+from flask import Blueprint, request, redirect, url_for, session, flash, render_template, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from app import spotify, db
-from app.spotify_utils import get_client_credentials_token, get_user_top_songs_artists
+from app.spotify_utils import get_client_credentials_token, get_user_top_songs_artists, spotify_search_tracks
 import requests
+import logging
 
 spotifyroutes = Blueprint('spotifyroutes', __name__)
 
@@ -71,3 +72,35 @@ def top_songs():
             return redirect(url_for('spotifyroutes.index'))
     except Exception as e:
         flash(str(e), 'error')
+
+@spotifyroutes.route('/spotify/search')
+def spotify_search():
+    query = request.args.get('q')
+    logging.debug(f"Search query received: {query}")  # Log the incoming query
+    if query:
+        try:
+            results = spotify_search_tracks(query)
+            logging.debug(f"Spotify search results: {results}")  # Log the results from Spotify
+            return jsonify(results)
+        except Exception as e:
+            logging.error(f"Failed to search Spotify: {e}")
+            return jsonify({'error': 'Failed to fetch data from Spotify'}), 500
+    return jsonify({'tracks': {'items': []}})
+
+def spotify_search_tracks(query):
+    import requests
+    access_token = get_client_credentials_token()  # Correct the variable name here
+    url = "https://api.spotify.com/v1/search"
+    headers = {
+        "Authorization": f"Bearer {access_token}"  # Use f-string to correctly include the token
+    }
+    params = {
+        "q": query,
+        "type": "track",
+        "limit": 10
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()

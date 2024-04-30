@@ -94,3 +94,45 @@ def get_client_credentials_token():
         return token_info['access_token']
     else:
         raise Exception("Failed to obtain token")
+    
+def spotify_search_tracks(query, access_token):
+    """
+    Search for tracks on Spotify using a given query.
+    
+    Args:
+        query (str): The search term.
+        access_token (str): Spotify API access token.
+    
+    Returns:
+        dict: JSON response containing search results.
+    """
+    url = "https://api.spotify.com/v1/search"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+    params = {
+        "q": query,
+        "type": "track",
+        "limit": 10  
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"tracks": {"items": []}}
+    
+
+def get_song_details(song_id):
+    access_token = get_client_credentials_token()
+    url = f"https://api.spotify.com/v1/tracks/{song_id}"
+    headers = { "Authorization": f"Bearer {access_token}" }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        return {
+            'name': data['name'],
+            'artists': [{'name': artist['name'], 'id': artist['id']} for artist in data['artists']],
+            'album_cover': data['album']['images'][0]['url']
+        }
+    else:
+        response.raise_for_status()

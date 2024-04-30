@@ -4,6 +4,7 @@ from app import db
 from app.models import Post, Comment, User
 from app.forms import PostForm
 from sqlalchemy import desc
+from app.spotify_utils import get_song_details
 
 
 community = Blueprint('community', __name__)
@@ -23,22 +24,33 @@ def community_get():
 
 @community.route('/community/<post_id>', methods=['GET', 'POST'])
 def view_post(post_id):
-    post = Post.query.filter_by(id=post_id).first()
+    post = Post.query.filter_by(id=post_id).first_or_404()
     comments = Comment.query.filter_by(post_id=post_id).order_by(desc(Comment.date_posted)).all()
+    song_details = None
+    if post.spotify_song_id:
+        song_details = get_song_details(post.spotify_song_id)  # Fetch song details if available
+
     if request.method == 'POST':
         content = request.form['comment']
         comment = Comment(content=content, post_id=post_id, author_id=current_user.id)
         db.session.add(comment)
         db.session.commit()
         return redirect(url_for('community.view_post', post_id=post_id))
-    return render_template('post.html', post=post, comments=comments, user=current_user)
+    
+    return render_template('post.html', post=post, comments=comments, user=current_user, song_details=song_details)
+
 
 @community.route('/create_post', methods=['GET', 'POST'])
 @login_required
 def create_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author_id=current_user.id)
+        post = Post(
+            title=form.title.data,
+            content=form.content.data,
+            author_id=current_user.id,
+            spotify_song_id=form.spotify_song_id.data if form.spotify_song_id.data else None
+        )
         db.session.add(post)
         db.session.commit()
         flash('Post created successfully!', 'success')

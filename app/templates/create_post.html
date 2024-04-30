@@ -23,7 +23,67 @@
         </div>
         {% endfor %}
       </div>
+      
+      <div class="mb-3">
+        <label for="spotify-search" class="form-label">(optional)Search Spotify for a song:</label>
+        <input type="text" id="spotify-search" class="form-control" placeholder="Type to search for songs">
+        <select id="spotify-search-results" class="form-control mt-2" name="spotify_song_id" size="5">
+            <option value="">Type to see songs...</option>
+        </select>
+    </div>    
+
       <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
     </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('spotify-search');
+
+    var debouncedSearch = debounce(function(event) {
+        var query = event.target.value;
+        if (query.length < 3) {
+            return; 
+        }
+        $.ajax({
+            url: '/spotify/search',
+            type: 'GET',
+            data: { 'q': query },
+            success: function(data) {
+                var select = document.getElementById('spotify-search-results');
+                select.innerHTML = ''; // Clear previous options
+                if (data.tracks.items.length > 0) {
+                    data.tracks.items.forEach(function(track) {
+                        var artistNames = track.artists.map(artist => artist.name).join(", ");
+                        var option = new Option(`${track.name} by ${artistNames}`, track.id);
+                        select.add(option);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">No results found</option>';
+                }
+            },
+            error: function() {
+                var select = document.getElementById('spotify-search-results');
+                select.innerHTML = '<option value="">Error searching songs</option>';
+            }
+        });
+    }, 300); 
+
+    searchInput.addEventListener('input', debouncedSearch);
+});
+
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        }, wait);
+        if (immediate && !timeout) func.apply(context, args);
+    };
+}
+</script>
 {% endblock %}

@@ -9,14 +9,14 @@
             <h2 class="mt-4">Posts</h2>
             {% if posts %}
                 {% for post in posts %}
-                    <div class="card mb-4">
+                    <div class="card mb-4 glass-card">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="stretched-link">
                                     {{ post.title }}
                                 </a>
                             </h5>
-                            <p class="card-text txt-black">{{ post.content | truncate(120) }}</p>
+                            <p class="card-text">{{ post.content | truncate(120) }}</p>
                             <small class="text-muted">Posted by {{ post.author.username }} on {{ post.date_posted.strftime('%Y-%m-%d') }}</small>
                         </div>
                     </div>

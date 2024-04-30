@@ -63,6 +63,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    spotify_song_id = db.Column(db.String(22), nullable=True) 
     comments = db.relationship('Comment', backref='post', lazy=True, cascade="all, delete-orphan")
 
 class Comment(db.Model):
