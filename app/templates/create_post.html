@@ -1,38 +1,40 @@
 {% extends 'layout.html' %}
+
 {% block title %}Create Post{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <h2>Create a New Post</h2>
     <form method="POST" enctype="multipart/form-data">
-      {{ form.hidden_tag() }}
-      <div class="mb-3">
-        {{ form.title.label(class="form-label") }}
-        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-        {% for error in form.title.errors %}
-        <div class="invalid-feedback">
-          {{ error }}
-        </div>
-        {% endfor %}
-      </div>
-      <div class="mb-3">
-        {{ form.content.label(class="form-label") }}
-        {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else "")) }}
-        {% for error in form.content.errors %}
-        <div class="invalid-feedback">
-          {{ error }}
-        </div>
-        {% endfor %}
-      </div>
-      
-      <div class="mb-3">
-        <label for="spotify-search" class="form-label">(optional)Search Spotify for a song:</label>
-        <input type="text" id="spotify-search" class="form-control" placeholder="Type to search for songs">
-        <select id="spotify-search-results" class="form-control mt-2" name="spotify_song_id" size="5">
-            <option value="">Type to see songs...</option>
-        </select>
-    </div>    
+        {{ form.hidden_tag() }}
 
-      <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+        <div class="mb-3">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+            {% for error in form.title.errors %}
+            <div class="invalid-feedback">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="mb-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else "")) }}
+            {% for error in form.content.errors %}
+            <div class="invalid-feedback">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label for="spotify-search" class="form-label">Link a song to your post: (optional) </label>
+            <input type="text" id="spotify-search" class="form-control" placeholder="Type to search for songs">
+            <ul id="spotify-search-results" class="list-group mt-2"></ul>
+            <input type="hidden" id="spotify-song-id" name="spotify_song_id">
+        </div>
+        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
     </form>
 </div>
 
@@ -40,32 +42,41 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var searchInput = document.getElementById('spotify-search');
+    var songIdInput = document.getElementById('spotify-song-id');
+    var resultsList = document.getElementById('spotify-search-results');
 
     var debouncedSearch = debounce(function(event) {
         var query = event.target.value;
         if (query.length < 3) {
-            return; 
+            resultsList.style.display = 'none';  
+            return;
         }
         $.ajax({
             url: '/spotify/search',
             type: 'GET',
             data: { 'q': query },
             success: function(data) {
-                var select = document.getElementById('spotify-search-results');
-                select.innerHTML = ''; // Clear previous options
+                resultsList.innerHTML = '';
+                resultsList.style.display = 'block';  
                 if (data.tracks.items.length > 0) {
                     data.tracks.items.forEach(function(track) {
                         var artistNames = track.artists.map(artist => artist.name).join(", ");
-                        var option = new Option(`${track.name} by ${artistNames}`, track.id);
-                        select.add(option);
+                        var listItem = document.createElement('li');
+                        listItem.classList.add('list-group-item');
+                        listItem.innerHTML = `<img src="${track.album.images[0].url}" alt="Album cover" style="width: 50px; height: auto; vertical-align: middle;"> <span>${track.name} by ${artistNames}</span>`;
+                        listItem.onclick = function() { 
+                            songIdInput.value = track.id;  
+                            searchInput.value = track.name + ' by ' + artistNames;  
+                            resultsList.style.display = 'none'; 
+                        };
+                        resultsList.appendChild(listItem);
                     });
                 } else {
-                    select.innerHTML = '<option value="">No results found</option>';
+                    resultsList.innerHTML = '<li class="list-group-item">No results found</li>';
                 }
             },
             error: function() {
-                var select = document.getElementById('spotify-search-results');
-                select.innerHTML = '<option value="">Error searching songs</option>';
+                resultsList.innerHTML = '<li class="list-group-item">Error searching songs</li>';
             }
         });
     }, 300); 

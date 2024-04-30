@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Comment</h2>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <form action="{{ url_for('community.edit_comment', comment_id=comment.id) }}" method="POST">
+                <div class="form-group">
+                    <label for="content">Comment</label>
+                    <textarea class="form-control" id="content" name="content" rows="3" required>{{ comment.content }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Comment</button>
+                <a href="{{ url_for('community.view_post', post_id=comment.post_id) }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -85,3 +85,36 @@ def edit_post(post_id):
         flash('Your post has been updated!', 'success')
         return redirect(url_for('community.community_get', post_id=post.id))
     return render_template('edit_post.html', title='Edit Post', post=post)
+
+
+@community.route('/delete_comment/<int:comment_id>', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    if comment.author_id != current_user.id:
+        flash('You are not authorized to delete this comment', 'error')
+        return redirect(url_for('community.view_post', post_id=comment.post_id))
+    
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Comment deleted successfully', 'success')
+    return redirect(url_for('community.view_post', post_id=comment.post_id))
+
+
+@community.route('/edit_comment/<int:comment_id>', methods=['GET', 'POST'])
+@login_required
+def edit_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    if comment.author_id != current_user.id:
+        flash('You are not authorized to edit this comment', 'error')
+        return redirect(url_for('community.view_post', post_id=comment.post_id))
+    
+    if request.method == 'POST':
+        comment.content = request.form['content']
+        db.session.commit()
+        flash('Comment updated successfully!', 'success')
+        return redirect(url_for('community.view_post', post_id=comment.post_id))
+    
+    return render_template('edit_comment.html', comment=comment)
+
+
