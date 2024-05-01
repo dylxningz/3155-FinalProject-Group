@@ -36,8 +36,8 @@ def authorize_spotify():
             flash('Failed to fetch Spotify profile information.', 'error')
     except Exception as e:
         flash(f'Failed to link Spotify account: {str(e)}', 'error')
-    next_url = session.pop('next_url', url_for('profile.dashboard'))
-    return redirect(next_url)
+
+    return redirect(url_for('spotifyroutes.recently_played'))
 
 @spotifyroutes.route('/artist/<artist_id>')
 def artist_page(artist_id):
@@ -141,7 +141,7 @@ def recently_played():
                 db.session.rollback()
                 print("Failed to add stream for:", track['uri'])  # Log failed stream addition
 
-    return 'Data processed'
+    return redirect(url_for('profile.dashboard'))
 
        
             
