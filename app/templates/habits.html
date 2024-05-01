@@ -79,13 +79,13 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="graph-glass">
-                        <h3>Graph of Top Songs:</h3>
+                        <h3>Top Songs:</h3>
                         <canvas id="songsChart" width="400" height="400"></canvas>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="graph-glass">
-                        <h3>Graph of Top Artists:</h3>
+                        <h3>Top Artists:</h3>
                         <canvas id="genresChart" width="400" height="400"></canvas>
                     </div>
                 </div>
@@ -174,6 +174,9 @@ function renderSongChart(songs) {
                         color: 'white',
                         display: false
                     }
+                },
+                y: {
+                    display: false
                 }
             },
             plugins: {
@@ -223,6 +226,9 @@ function renderArtistChart(artists) {
                         display: false
                     },
                     
+                },
+                y: {
+                    display: false
                 }
             },
             plugins: {
