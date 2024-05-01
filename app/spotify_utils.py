@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 import pytz
-from app.models import User
+from app.models import User,Song,Stream
 import requests
 from db_secrets import CLIENT_ID, CLIENT_SECRET
 from app import db
 from flask_login import current_user
+from sqlalchemy.exc import IntegrityError
 
 def is_token_expired(user):
     utc = pytz.UTC
@@ -19,7 +20,7 @@ def refresh_spotify_token(user_id):
     user = User.query.get(user_id)
     if not user:
         raise ValueError("User not found")
-    if current_user.spotify_refresh_token:
+    if user.spotify_refresh_token:
         refresh_url = 'https://accounts.spotify.com/api/token'
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         data = {
@@ -35,10 +36,42 @@ def refresh_spotify_token(user_id):
             if 'expires_in' in token_info:
                 user.token_expiry = datetime.utcnow() + timedelta(seconds=token_info['expires_in'])
             db.session.commit()
+
+            # Fetch and save recently played songs immediately after refreshing token
+            update_recently_played_songs(user)
+
             return token_info['access_token']
         else:
             raise Exception("Failed to refresh token")
     return None
+
+def update_recently_played_songs(user):
+    recently_played = get_user_recently_played_songs(user)
+    if recently_played and 'items' in recently_played:
+        for item in recently_played['items']:
+            track = item['track']
+            album = track['album']
+            artist = track['album']['artists'][0]
+            new_song = Song(uri=track['uri'], name=track['name'], album=album['name'], artist=artist['name'])
+            new_stream = Stream(time=item['played_at'], user_id=user.id)
+
+            # Avoid duplication of song records
+            existing_song = Song.query.filter_by(uri=track['uri']).first()
+            if not existing_song:
+                db.session.add(new_song)
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    db.session.rollback()
+            
+            # Attach song_id to new_stream
+            existing_song = existing_song or Song.query.filter_by(uri=track['uri']).first()
+            new_stream.song_id = existing_song.id
+            db.session.add(new_stream)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
 def get_spotify_access_token(user):
     if is_token_expired(user):
@@ -139,9 +172,15 @@ def get_song_details(song_id):
         response.raise_for_status()
 
 def get_user_recently_played_songs(user):
+    if not user.spotify_access_token:
+        return None  # or handle appropriately if no token is available
+
     headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
-    if user.spotify_access_token:
-        response = requests.get(f'https://api.spotify.com/v1/me/player/recently-played?limit=30', headers=headers)
-        if response.status_code == 200:
-            recently_played = response.json()
-            return recently_played
+    response = requests.get('https://api.spotify.com/v1/me/player/recently-played?limit=30', headers=headers)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        # Log the error status and message
+        print(f"Failed to fetch recently played songs: Status {response.status_code}, Message: {response.text}")
+        return None

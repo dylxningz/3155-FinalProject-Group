@@ -3,179 +3,235 @@
 {% block title %}Listening Habits{% endblock %}
 
 {% block content %}
-<div class="sidebar">
-    <hr>
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link active" href="{{url_for('profile.dashboard')}}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Trends</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{url_for('profile.settings')}}">Settings</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{url_for('auth.logout')}}">Logout</a>
-        </li>
-    </ul>
-</div>
-
-<h2 class="dashboard-top-txt">Here are your Listening Habits</h2>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-5 top-songs-cnt box-main-1">
-            <h3>Your Top 5 Songs:</h3>
-            {% if top_songs %}
-                <ul class="list-unstyled">
-                    {% for song in top_songs %}
-                        <li>
-                            <div class="media">
-                                <span class="rank">{{ song.rank }}.</span>
-                                {% if song.cover %}
-                                    <img src="{{ song.cover }}" alt="{{ song.name }}" style="height: 100px; width: 100px;"> 
-                                {% endif %}
-                                <div class="media-body">
-                                    <h5 class="mt-0">{{ song.name }}</h5>
-                                    {% for artist in song.artists %}
-                                        <a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
+        <div class="col-md-2">
+            <div class="sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('profile.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile.habits')}}">Habits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile.settings') }}">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
                 </ul>
-            {% else %}
-                <p>You have no top songs from Spotify to display, or your Spotify account is not linked.</p>
-            {% endif %}
+            </div>
         </div>
-        
-        <div class="col-md-5 top-genres-cnt box-main-2">
-            <h3>Your Top 5 Artists:</h3>
-            {% if top_genres %}
-                <ul class="list-unstyled">
-                    {% for genre, song_count in top_genres.items() %}
-                        <li>{{ genre }} ({{ song_count }} different songs)</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>You have no top genres from Spotify to display, or your Spotify account is not linked.</p>
-            {% endif %}
-        </div>
-    </div>
-    
-    <div class="row mt-5">
-        <div class="col-md-6">
-            <h3>Graph of Top Songs:</h3>
-            <canvas id="songsChart" width="400" height="400"></canvas>
-        </div>
-        
-        <div class="col-md-6">
-            <h3>Graph of Top Genres:</h3>
-            <canvas id="genresChart" width="400" height="400"></canvas>
+
+        <div class="col-md-10">
+            <h2 class="top-txt">Here are your Listening Habits</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box-main-1">
+                        <h3>Your Top 5 Songs:</h3>
+                        {% if top_songs %}
+                            <ul class="list-unstyled">
+                                {% for song in top_songs %}
+                                    <li>
+                                        <div class="media">
+                                            <span class="rank">{{ song.rank }}.</span>
+                                            {% if song.cover %}
+                                                <img src="{{ song.cover }}" alt="{{ song.name }}" style="height: 100px; width: 100px;">
+                                            {% endif %}
+                                            <div class="media-body">
+                                                <h5 class="mt-0">{{ song.name }}</h5>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>You have no top songs from Spotify to display, or your Spotify account is not linked.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="box-main-2">
+                        <h3>Your Top 5 Artists:</h3>
+                        {% if top_artists %}
+                            <ul class="list-unstyled">
+                                {% for artist in top_artists %}
+                                    <li>
+                                        <div class="media">
+                                            <span class="rank">{{ loop.index }}.</span> {# Add the rank number #}
+                                            <div class="media-body">
+                                                <h5 class="mt-0">{{ artist.artist }} ({{ artist.song_count }} different songs)</h5> {# Display the artist name and number of different songs #}
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>You have no top artists from Spotify to display, or your Spotify account is not linked.</p>
+                        {% endif %}
+                    </div>
+                </div>
+             </div>
+                
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="graph-glass">
+                        <h3>Graph of Top Songs:</h3>
+                        <canvas id="songsChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="graph-glass">
+                        <h3>Graph of Top Artists:</h3>
+                        <canvas id="genresChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<!-- Graphs to display songs and genre-->
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Dummy Data -->
 <script>
-fetch('/user-streams')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.songs); // Log the received data to the console
+document.addEventListener('DOMContentLoaded', function() {
+    loadCharts();
+});
+function interpolateColor(color1, color2, factor) {
+    if (arguments.length < 3) { 
+        factor = 0.5;
+    }
+    var result = color1.slice();
+    for (var i = 0; i < 3; i++) {
+        result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+    }
+    return result;
+};
 
-        const artistsData = data.artists.slice(0, 5);
-        const songData = data.songs.slice(0, 5);
+function getGradientColors(startColor, endColor, count) {
+    var colors = [];
+    for (var i = 0; i < count; i++) {
+        var factor = i / (count - 1);
+        var color = interpolateColor(startColor, endColor, factor);
+        colors.push(`rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.6)`);
+    }
+    return colors;
+}
 
-        // Extract titles and frequencies from songData
-        const titles = songData.map(song => song.title);
-        const frequencies = songData.map(song => song.frequency);
-
-        // Create chart
-        var ctx = document.getElementById('songsChart').getContext('2d');
-        var songsChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: titles,
-                datasets: [{
-                    label: 'Streams',
-                    data: frequencies,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        display : false
-                    },
-                    x:{
-                        display : false
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false 
-                    }
-                }
+function loadCharts() {
+    fetch('/user-streams')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data for charts:', data);
+            if (data.songs && data.artists) {
+                renderSongChart(data.songs);
+                renderArtistChart(data.artists);
             }
+        })
+        .catch(error => {
+            console.error('Error loading chart data:', error);
         });
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+}
 
-fetch('/user-streams')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.artists)
-    var ctxGenres = document.getElementById('genresChart').getContext('2d');
-
-    const artistsData = data.artists.slice(0, 5);
-    const labels = artistsData.map(artist => artist.artist);
-    const dataValues = artistsData.map(artist => artist.total_streams);
-
-    var genresChart = new Chart(ctxGenres, {
+function renderSongChart(songs) {
+    var ctx = document.getElementById('songsChart').getContext('2d');
+    
+    var titles = songs.slice(0, 5).map(song => song.title);
+    var frequencies = songs.slice(0, 5).map(song => song.frequency);
+    
+    var startColor = [184, 73, 250];
+    var endColor = [59, 45, 142];
+    var backgroundColors = getGradientColors(startColor, endColor, songs.length);
+    
+    new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: titles,
             datasets: [{
-                label: 'Number of Different Songs',
-                data: dataValues,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                label: 'Streams',
+                data: frequencies,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        color: 'white',
+                        callback: function(value) {
+                            return value.toFixed(0);
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'white',
+                        display: false
+                    }
                 }
             },
             plugins: {
-                    legend: {
-                        display: false 
-                    }
+                legend: {
+                    display: false
                 }
+            }
         }
     });
-})
-</script>
+}
 
+function renderArtistChart(artists) {
+    var ctx = document.getElementById('genresChart').getContext('2d');
+    var labels = artists.slice(0, 5).map(artist => artist.artist);
+    var dataValues = artists.slice(0, 5).map(artist => artist.total_streams);
+    
+    var startColor = [184, 73, 250];
+    var endColor = [59, 45, 142];
+    var backgroundColors = getGradientColors(startColor, endColor, artists.length);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Different Songs',
+                data: dataValues,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: 'white',
+                        callback: function(value) {
+                            return value.toFixed(0);
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'white',
+                        display: false
+                    },
+                    
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+</script>
 {% endblock %}

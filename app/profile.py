@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template
-from app.models import User, Post
+from app.models import User, Post , Song, Stream
 from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_picture
 import requests
 from flask import flash, redirect, url_for
 from flask_login import current_user, login_required
 from app.spotify_utils import get_spotify_access_token
 from app import db
+from sqlalchemy import func, distinct
 
 profile = Blueprint('profile', __name__)
 
@@ -58,7 +59,42 @@ def dashboard():
 @profile.route('/habits')
 @login_required
 def habits():
-    return render_template('habits.html')
+    top_songs = get_top_songs(current_user.id)
+    top_artists = get_top_artists(current_user.id)
+    
+    return render_template('habits.html', top_songs=top_songs, top_artists=top_artists)
+
+def get_top_songs(user_id):
+    """Retrieve the top 5 songs based on the number of times they have been played by the user."""
+    query = db.session.query(
+        Song.name,
+        Song.uri,
+        func.count(Stream.time).label('plays')
+    ).join(Stream, Stream.song_id == Song.id
+    ).filter(Stream.user_id == user_id
+    ).group_by(Song.id
+    ).order_by(func.count(Stream.time).desc()
+    ).limit(5).all()
+
+    return [{'name': name, 'uri': uri, 'plays': plays, 'rank': idx + 1}
+            for idx, (name, uri, plays) in enumerate(query)]
+
+def get_top_artists(user_id):
+    """Retrieve the top 5 artists based on the number of different songs played by the user."""
+    query = db.session.query(
+        Song.artist,
+        func.count(distinct(Song.id)).label('song_count')
+    ).join(Stream, Stream.song_id == Song.id
+    ).filter(Stream.user_id == user_id
+    ).group_by(Song.artist
+    ).order_by(func.count(distinct(Song.id)).desc()
+    ).limit(5).all()
+
+
+
+    return [{'artist': artist, 'song_count': song_count}
+            for artist, song_count in query]
+
 
 @profile.route('/settings')
 @login_required
