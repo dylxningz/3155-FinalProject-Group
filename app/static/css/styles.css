@@ -190,7 +190,7 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
 /*will come back and make it work with all browsers and deviced, macbook looks a little weird and phones def arent right*/
 .image {
     opacity: 0;
-    width: 130px;
+    width: 110px;
     
 }
 
@@ -658,3 +658,7 @@ hr{
 .list-group-item:hover{
     background-color: var(--color-accent-dark);
 }
+
+
+
+/* Small devices (phones, less than 768px) */
