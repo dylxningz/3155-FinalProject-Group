@@ -113,34 +113,36 @@ def spotify_search_tracks(query):
 @login_required
 def recently_played():
     recently_played = get_user_recently_played_songs(current_user)
+    print("Recently Played:", recently_played)  # Log fetched data
     items = recently_played['items']
 
     for item in items:
         track = item['track']
-        album = item['track']['album']
-        artist = item['track']['album']['artists'][0]
+        album = track['album']
+        artist = track['album']['artists'][0]
         new_song = Song(uri=track['uri'], name=track['name'], album=album['name'], artist=artist['name'])
         new_stream = Stream(time=item['played_at'], user_id=current_user.id)
 
         try:
             db.session.add(new_song)
             db.session.commit()
-            
-
         except IntegrityError:
             db.session.rollback()
+            print("Song already exists:", track['uri'])  # Log duplicate entry
 
         existing_song = Song.query.filter_by(uri=track['uri']).first()
-        new_stream.song_id = existing_song.id
+        if existing_song:
+            new_stream.song_id = existing_song.id
 
-        try:
-            db.session.add(new_stream)
-            db.session.commit()
+            try:
+                db.session.add(new_stream)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                print("Failed to add stream for:", track['uri'])  # Log failed stream addition
 
-        except IntegrityError:
-            db.session.rollback()
+    return 'Data processed'
 
-    return ' '
        
             
 
@@ -149,52 +151,48 @@ def recently_played():
 @spotifyroutes.route('/user-streams')
 @login_required
 def user_streams():
-    subquery = db.session.query(Stream.song_id, func.count(Stream.song_id).label('frequency')) \
-                    .group_by(Stream.song_id) \
-                    .subquery()
+    # Define the maximum number of results to return
+    limit_results = 5
 
-    query_result = db.session.query(Song, subquery.c.frequency) \
-                            .outerjoin(subquery, Song.id == subquery.c.song_id) \
-                            .order_by(subquery.c.frequency.desc()) \
-                            .all()
-    
-    query_result = [(song, frequency) for song, frequency in query_result]
+    # Subquery for song frequency
+    subquery = db.session.query(
+        Stream.song_id,
+        func.count(Stream.song_id).label('frequency')
+    ).filter(
+        Stream.user_id == current_user.id
+    ).group_by(
+        Stream.song_id
+    ).subquery()
 
-    songs = []
-    for song, frequency in query_result:
-        song_dict = {
-            "id": song.id,
-            "title": song.name,
-            "frequency": frequency  
-        }
-        songs.append(song_dict)
+    # Main query for songs
+    query_result = db.session.query(
+        Song,
+        subquery.c.frequency
+    ).join(
+        subquery, Song.id == subquery.c.song_id
+    ).order_by(
+        subquery.c.frequency.desc()
+    ).limit(limit_results).all()
 
+    songs = [{"id": song.id, "title": song.name, "frequency": frequency or 0} for song, frequency in query_result]
+
+    # Query for artist frequency
     artist_freq = db.session.query(
         Song.artist,
         func.count(Stream.song_id).label('total_streams')
     ).join(
         Stream,
         Song.id == Stream.song_id
+    ).filter(
+        Stream.user_id == current_user.id
     ).group_by(
         Song.artist
-    ).all()
+    ).order_by(
+        func.count(Stream.song_id).desc()
+    ).limit(limit_results).all()
 
-    sorted_artist_freq = sorted(artist_freq, key=lambda x: x[1], reverse=True)
+    artists = [{"artist": artist, "total_streams": total_streams} for artist, total_streams in artist_freq]
 
-    artists = []
-    for artist, total_streams in sorted_artist_freq:
-        artist_dict = {
-            "artist": artist,
-            "total_streams": total_streams
-        }
-        artists.append(artist_dict)
-
-    
-        
-    
-    print(songs)
-    print(artists)
-
-    return jsonify({"songs" : songs, "artists" : artists})
+    return jsonify({"songs": songs, "artists": artists})
 
         

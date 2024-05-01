@@ -107,6 +107,14 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
 .box-main-2 a{
     color: var(--color-accent);
 }
+.box-main-1, .box-main-2 {
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px;
+    min-height: 300px; /* Ensure the boxes have a minimum height */
+    height: auto;
+}
 
 .box-main-3{
     background: #B849FA;
@@ -657,4 +665,17 @@ hr{
 
 .list-group-item:hover{
     background-color: var(--color-accent-dark);
+}
+
+.graph-glass{
+    background: rgba(176, 172, 180, 0.233);
+    border-radius: 16px;
+    backdrop-filter: blur(9.2px);
+    -webkit-backdrop-filter: blur(9.2px);
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transition: box-shadow 0.3s ease-in-out;
+    display: block;
+    margin: 10px;
+
 }
