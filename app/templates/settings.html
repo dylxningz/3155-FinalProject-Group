@@ -1,9 +1,6 @@
 {% extends 'layout.html' %}
-
 {% block title %}Profile Settings{% endblock %}
-
 {% block content %}
-
 <div class="sidebar">
     <hr>
     <ul class="nav flex-column">
@@ -21,39 +18,46 @@
         </li>
     </ul>
 </div>
-
 <h1 class="top-txt">Profile Settings</h1>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
             <div class="box-main-1">
-                <h2 style="text-align: center;">Update Your Information</h2>
+                <h2 style="text-align: center;">Change Username</h2>
                 <hr>
-                <form action="/update_profile" method="post">
+                <form action="{{ url_for('auth.change_username') }}" method="post">
                     <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" class="form-control white" id="username" name="username" placeholder="Change your username">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control white" id="email" name="email" placeholder="Change your email">
-                    </div>
-                    <hr>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control white" id="password" name="password" placeholder="Reset your password">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Re-enter Password:</label>
-                        <input type="password" class="form-control white" id="password" name="password" placeholder="Confirm your password">
+                        <label for="new_username">New Username:</label>
+                        <input type="text" class="form-control white" id="new_username" name="new_username" placeholder="Enter your new username">
                     </div>
                     <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary btn-main white">Submit</button>
+                        <button type="submit" class="btn btn-primary btn-main white">Change Username</button>
                     </div>
                 </form>
             </div>
         </div>
         <div class="col-md-6">
+            <div class="box-main-1">
+                <h2 style="text-align: center;">Change Password</h2>
+                <hr>
+                <form action="{{ url_for('auth.change_password') }}" method="post">
+                    <div class="form-group">
+                        <label for="new_password">New Password:</label>
+                        <input type="password" class="form-control white" id="new_password" name="new_password" placeholder="Enter your new password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password:</label>
+                        <input type="password" class="form-control white" id="confirm_password" name="confirm_password" placeholder="Confirm your new password">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-main white">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
             <div class="box-main-1">
                 <h2 style="text-align: center;">Link Account</h2>
                 <a href="{{ url_for('spotifyroutes.login_spotify') }}" class="box-acc-1 d-flex align-items-center">
