@@ -2,9 +2,12 @@ from flask import Blueprint, request, redirect, url_for, session, flash, render_
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from app import spotify, db
-from app.spotify_utils import get_client_credentials_token, get_user_top_songs_artists, spotify_search_tracks
+from app.spotify_utils import get_client_credentials_token, get_user_top_songs_artists, spotify_search_tracks, get_user_recently_played_songs
 import requests
 import logging
+from .models import Song, Stream
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func
 
 spotifyroutes = Blueprint('spotifyroutes', __name__)
 
@@ -104,3 +107,94 @@ def spotify_search_tracks(query):
         return response.json()
     else:
         response.raise_for_status()
+
+
+@spotifyroutes.route('/recently-played')
+@login_required
+def recently_played():
+    recently_played = get_user_recently_played_songs(current_user)
+    items = recently_played['items']
+
+    for item in items:
+        track = item['track']
+        album = item['track']['album']
+        artist = item['track']['album']['artists'][0]
+        new_song = Song(uri=track['uri'], name=track['name'], album=album['name'], artist=artist['name'])
+        new_stream = Stream(time=item['played_at'], user_id=current_user.id)
+
+        try:
+            db.session.add(new_song)
+            db.session.commit()
+            
+
+        except IntegrityError:
+            db.session.rollback()
+
+        existing_song = Song.query.filter_by(uri=track['uri']).first()
+        new_stream.song_id = existing_song.id
+
+        try:
+            db.session.add(new_stream)
+            db.session.commit()
+
+        except IntegrityError:
+            db.session.rollback()
+
+    return ' '
+       
+            
+
+   
+
+@spotifyroutes.route('/user-streams')
+@login_required
+def user_streams():
+    subquery = db.session.query(Stream.song_id, func.count(Stream.song_id).label('frequency')) \
+                    .group_by(Stream.song_id) \
+                    .subquery()
+
+    query_result = db.session.query(Song, subquery.c.frequency) \
+                            .outerjoin(subquery, Song.id == subquery.c.song_id) \
+                            .order_by(subquery.c.frequency.desc()) \
+                            .all()
+    
+    query_result = [(song, frequency) for song, frequency in query_result]
+
+    songs = []
+    for song, frequency in query_result:
+        song_dict = {
+            "id": song.id,
+            "title": song.name,
+            "frequency": frequency  
+        }
+        songs.append(song_dict)
+
+    artist_freq = db.session.query(
+        Song.artist,
+        func.count(Stream.song_id).label('total_streams')
+    ).join(
+        Stream,
+        Song.id == Stream.song_id
+    ).group_by(
+        Song.artist
+    ).all()
+
+    sorted_artist_freq = sorted(artist_freq, key=lambda x: x[1], reverse=True)
+
+    artists = []
+    for artist, total_streams in sorted_artist_freq:
+        artist_dict = {
+            "artist": artist,
+            "total_streams": total_streams
+        }
+        artists.append(artist_dict)
+
+    
+        
+    
+    print(songs)
+    print(artists)
+
+    return jsonify({"songs" : songs, "artists" : artists})
+
+        
