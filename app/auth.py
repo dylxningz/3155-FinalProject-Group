@@ -38,3 +38,38 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
+
+
+@auth.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if new_password == confirm_password:
+        current_user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        db.session.commit()
+        flash('Password changed successfully.', 'success')
+    else:
+        flash('New password and confirmation do not match.', 'error')
+
+    return redirect(url_for('profile.settings'))
+
+
+
+
+
+
+@auth.route('/change_username', methods=['POST'])
+@login_required
+def change_username():
+    new_username = request.form.get('new_username')
+    if new_username:
+        current_user.username = new_username
+        db.session.commit()
+        flash('Username changed successfully.', 'success')
+    else:
+        flash('No new username provided.', 'error')
+    return redirect(url_for('profile.settings'))
