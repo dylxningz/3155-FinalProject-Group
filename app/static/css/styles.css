@@ -187,12 +187,12 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
 }
 
 /*Index Page Styling/Animation (maybe will use something else)*/
-/*will come back and make it work with all browsers and deviced, macbook looks a little weird and phones def arent right*/
+
 .image {
     opacity: 0;
-    width: 15vw; /* Scale width based on viewport width */
-    max-width: 110px; /* Maximum width limit */
-    min-width: 60px; /* Minimum width for visibility */
+    width: 15vw; 
+    max-width: 110px;
+    min-width: 60px; 
 }
 
 .anim-index-left .image {
@@ -311,9 +311,9 @@ html, body {
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    /* Adjustments specific to high-DPI devices */
+
     .image {
-        width: 8vw; /* Smaller to prevent stacking */
+        width: 8vw; 
     }
     #final-text {
         padding: 1.5vw;
