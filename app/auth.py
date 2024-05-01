@@ -73,3 +73,19 @@ def change_username():
     else:
         flash('No new username provided.', 'error')
     return redirect(url_for('profile.settings'))
+
+@auth.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    if request.form.get('confirm_delete') == 'yes':
+        try:
+            db.session.delete(current_user)
+            db.session.commit()
+            flash('Your account has been successfully deleted.', 'success')
+            logout_user()
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            flash('An error occurred while deleting your account. Please try again later.', 'error')
+    else:
+        flash('Account deletion not confirmed. No action taken.', 'info')
+    return redirect(url_for('profile.settings'))
