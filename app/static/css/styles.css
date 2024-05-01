@@ -310,6 +310,20 @@ html, body {
     }
 }
 
+@media only screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Adjustments specific to high-DPI devices */
+    .image {
+        width: 8vw; /* Smaller to prevent stacking */
+    }
+    #final-text {
+        padding: 1.5vw;
+        font-size: 2vw;
+    }
+    #final-text h1 {
+        font-size: 3.5vw;
+    }
+}
+
 .login-button{
     display: inline-block;
     text-decoration: none;
