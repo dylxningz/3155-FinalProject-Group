@@ -11,58 +11,73 @@
         <h5 class="card-subtitle mb-2 text-muted">
             By: <a href="{{ url_for('profile.user_profile', username=post.author.username) }}">{{ post.author.username }}</a>
         </h5>
-<div class="card-body">
-                {% if song_details %}
-        <div class="media mt-8">
-            <a href="https://open.spotify.com/track/{{ post.spotify_song_id }}" target="_blank">
-                <img src="{{ song_details.album_cover }}" class="align-self-start mr-3" alt="Album cover" style="width: 64px;">
-            </a>
-            <div class="media-body">
-                <h5 class="mt-1">{{ song_details.name }}</h5>
-                {% for artist in song_details.artists %}
-                    <a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
-    <hr>
-    <p class="card-text">{{ post.content }}</p>
-    <hr>
-                <h4>Comments</h4>
-                {% for comment in comments %}
-    <div class="card mb-2">
-        <div class="card-comment d-flex justify-content-between align-items-center">
-            <p class="mb-0">
-                <a href="{{ url_for('profile.user_profile', username=comment.commenter.username) }}" class="comment-user">
-                    {{ comment.commenter.username }}
-                </a> : {{ comment.content }}
-            </p>
-            {% if current_user.is_authenticated and current_user.id == comment.author_id %}
-            <div>
-                <a href="{{ url_for('community.edit_comment', comment_id=comment.id) }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-pencil-alt"></i>
+        <div class="card-body">
+            {% if song_details %}
+            <!-- Spotify song details section -->
+            <div class="media mt-8">
+                <a href="https://open.spotify.com/track/{{ post.spotify_song_id }}" target="_blank">
+                    <img src="{{ song_details.album_cover }}" class="align-self-start mr-3" alt="Album cover" style="width: 64px;">
                 </a>
-                <form action="{{ url_for('community.delete_comment', comment_id=comment.id) }}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <div class="media-body">
+                    <h5 class="mt-1">{{ song_details.name }}</h5>
+                    {% for artist in song_details.artists %}
+                        <a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <hr>
+            <p class="card-text">{{ post.content }}</p>
+         
+            
+            <!-- Like button and count -->
+            <div class="like-container">
+                <button type="button" class="like-btn" onclick="toggleLike('{{ post.id }}', this)">
+                    <i class="fa{{ 's fa-heart' if current_user.has_liked_post(post) else 'r fa-heart' }} like-icon" data-post-id="{{ post.id }}"></i>
+                </button>
+                <span id="like-count-{{ post.id }}">{{ post.post_likes.count() }}</span>
+            </div>
+            
+            
+            
+    
+            <hr>
+            <h4>Comments</h4>
+            {% for comment in comments %}
+            <!-- Comments section -->
+            <div class="card mb-2">
+                <div class="card-comment d-flex justify-content-between align-items-center">
+                    <p class="mb-0">
+                        <a href="{{ url_for('profile.user_profile', username=comment.commenter.username) }}" class="comment-user">
+                            {{ comment.commenter.username }}
+                        </a> : {{ comment.content }}
+                    </p>
+                    {% if current_user.is_authenticated and current_user.id == comment.author_id %}
+                    <div>
+                        <a href="{{ url_for('community.edit_comment', comment_id=comment.id) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        <form action="{{ url_for('community.delete_comment', comment_id=comment.id) }}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+    
+            {% if current_user and current_user.id == post.author_id %} 
+            <!-- Edit and Delete Post Buttons -->
+            <div class="d-flex justify-content-end mt-3"> 
+                <form action="{{ url_for('community.delete_post', post_id=post.id) }}" method="POST" class="mr-2">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
+                <a href="{{ url_for('community.edit_post', post_id=post.id) }}" class="btn btn-primary btn-sm">Edit</a>
             </div>
             {% endif %}
         </div>
-        
-    </div>
-{% endfor %}
-
-    </div>
-    {% if current_user and current_user.id == post.author_id %} 
-        <div class="d-flex justify-content-end mt-3"> 
-            <form action="{{ url_for('community.delete_post', post_id=post.id) }}" method="POST" class="mr-2">
-                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-            </form>
-            <a href="{{ url_for('community.edit_post', post_id=post.id) }}" class="btn btn-primary btn-sm">Edit</a>
-        </div>
-    {% endif %}
     </div>
 
 
@@ -86,5 +101,34 @@
             </form>
         </div>
     </div>
-</div>    
+</div>  
+<script>
+function toggleLike(postId, button) {
+    const iconElement = button.querySelector('i');
+
+    fetch('/toggle_like/' + postId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+        }
+    }).then(response => response.json())
+    .then(data => {
+        const countSpan = document.getElementById('like-count-' + postId);
+        countSpan.textContent = data.likes;
+
+        if (data.liked) {
+            iconElement.classList.remove('fa-heart-o', 'far'); 
+            iconElement.classList.add('fa-heart', 'fas');      
+        } else {
+            iconElement.classList.remove('fa-heart', 'fas');  
+            iconElement.classList.add('fa-heart-o', 'far');   
+        }
+    }).catch(error => {
+        console.error('Fetch Error:', error);
+    });
+}
+
+    </script>  
 {% endblock %}
+

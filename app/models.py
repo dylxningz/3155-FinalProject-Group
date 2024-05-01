@@ -18,10 +18,14 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
     streams = db.relationship('Stream', backref='streamer', lazy=True)
     comments = db.relationship('Comment', backref='commenter', lazy=True)
+    liked_posts = db.relationship('PostLike', back_populates='user', lazy='dynamic')
 
     def __repr__(self):
         return f'<User {self.username}>'
     
+    def has_liked_post(self, post):
+        """Check if a user has liked a given post."""
+        return PostLike.query.filter_by(user_id=self.id, post_id=post.id).count() > 0
 
 class Song(db.Model):
     __tablename__ = 'song'
@@ -56,6 +60,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     spotify_song_id = db.Column(db.String(), nullable=True) 
     comments = db.relationship('Comment', backref='post', lazy=True, cascade="all, delete-orphan")
+    post_likes = db.relationship('PostLike', back_populates='post', lazy='dynamic')
 
 class Comment(db.Model):
     __tablename__ = "comment"
@@ -65,3 +70,9 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
 
+class PostLike(db.Model):
+    __tablename__ = 'post_like'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    user = db.relationship('User', back_populates='liked_posts')
+    post = db.relationship('Post', back_populates='post_likes')

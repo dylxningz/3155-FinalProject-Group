@@ -734,3 +734,31 @@ hr{
     margin: 10px;
 
 }
+
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.like-icon {
+    color: red;
+    font-size: 24px;
+}
+
+.like-icon:hover {
+    color: darkred;
+}
+
+.like-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}

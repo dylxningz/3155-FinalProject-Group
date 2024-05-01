@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from app.models import User, Post , Song, Stream
+from app.models import User, Post , Song, Stream, PostLike
 from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_picture
 import requests
 from flask import flash, redirect, url_for
@@ -55,7 +55,11 @@ def dashboard():
     access_token = get_spotify_access_token(current_user)
     top_songs, top_artists = get_user_top_songs_artists(current_user)
     user_posts = Post.query.filter_by(author_id=current_user.id).order_by(Post.date_posted.desc()).all()  # Fetching posts
-    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists, user_posts=user_posts)
+    liked_posts = Post.query.join(PostLike, (PostLike.post_id == Post.id)).filter(PostLike.user_id == current_user.id).all()
+    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists, user_posts=user_posts, liked_posts=liked_posts)
+
+
+
 @profile.route('/habits')
 @login_required
 def habits():

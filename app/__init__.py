@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import requests
 from flask_login import LoginManager
 from db_secrets import DB_URI, CLIENT_ID, CLIENT_SECRET
+from flask_wtf.csrf import CSRFProtect
 
 load_dotenv()
 app = Flask(__name__)
@@ -14,6 +15,8 @@ app.config['SECRET_KEY'] = 'supersecret'
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+csrf = CSRFProtect(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'auth.login'  

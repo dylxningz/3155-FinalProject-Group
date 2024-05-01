@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app import db
-from app.models import Post, Comment, User
+from app.models import Post, Comment, User, PostLike
 from app.forms import PostForm
 from sqlalchemy import desc
 from app.spotify_utils import get_song_details
@@ -118,3 +118,28 @@ def edit_comment(comment_id):
     return render_template('edit_comment.html', comment=comment)
 
 
+@community.route('/toggle_like/<int:post_id>', methods=['POST'])
+@login_required
+def toggle_like(post_id):
+    post = Post.query.get_or_404(post_id)
+    like = PostLike.query.filter_by(user_id=current_user.id, post_id=post_id).first()
+
+    if like:
+        db.session.delete(like)
+        db.session.commit()
+        liked = False  # Liked status after operation
+        message = 'You have unliked the post.'
+    else:
+        like = PostLike(user_id=current_user.id, post_id=post_id)
+        db.session.add(like)
+        db.session.commit()
+        liked = True
+        message = 'You liked the post!'
+
+    likes_count = PostLike.query.filter_by(post_id=post_id).count()
+    return jsonify({
+        'success': True,
+        'liked': liked,
+        'likes': likes_count,
+        'message': message
+    })
