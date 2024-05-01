@@ -4,6 +4,7 @@ from app.models import User
 import requests
 from db_secrets import CLIENT_ID, CLIENT_SECRET
 from app import db
+import logging
 
 def is_token_expired(user):
     utc = pytz.UTC
@@ -136,3 +137,14 @@ def get_song_details(song_id):
         }
     else:
         response.raise_for_status()
+
+def ensure_spotify_token(user):
+    if is_token_expired(user):
+        new_access_token = refresh_spotify_token(user.id)
+        if new_access_token:
+            user.spotify_access_token = new_access_token
+            db.session.commit()
+        else:
+            logging.error("Failed to refresh Spotify token for user: " + user.username)
+            return None
+    return user.spotify_access_token

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from app.models import User, Post
-from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_picture
+from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_picture, ensure_spotify_token
 import requests
 from flask import flash, redirect, url_for
 from flask_login import current_user, login_required
@@ -12,41 +12,51 @@ profile = Blueprint('profile', __name__)
 @profile.route('/users/<username>')
 def user_profile(username):
     user = User.query.filter_by(username=username).first()
-    user_top_songs, user_top_artists = get_user_top_songs_artists(user)
-    profile_picture = get_spotify_profile_picture(user)
-    spotify_info = None
-    if user and user.spotify_access_token:
-        headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
-        response = requests.get('https://api.spotify.com/v1/me/player/currently-playing', headers=headers)
-        current_song_data = response.json().get('item')
-        if current_song_data:
-            current_song = {
-                'name': current_song_data['name'],
-                'artist': current_song_data['artists'][0]['name'],
-                'cover': current_song_data['album']['images'][0]['url'] if current_song_data['album']['images'] else None,
-                'timestamp': current_song_data['timestamp'],
-                'end_time': current_song_data['end_time']
-            }
-            spotify_info = {
-                'is_currently_listening': True,
-                'current_song': current_song
-            }
-        else:
-            spotify_info = {
-                'is_currently_listening': False
-            }
-    if user:
-        return render_template(
-            'user_profile.html',
-            user=user,
-            username=username,
-            top_songs=user_top_songs,
-            top_artists=user_top_artists,
-            profile_picture=profile_picture,
-            spotify_info=spotify_info)
-    else:
+    if not user:
         flash('User not found.', 'error')
         return redirect(url_for('index'))
+
+   
+    spotify_access_token = ensure_spotify_token(user)
+    if not spotify_access_token:
+        flash('Failed to access Spotify data.', 'error')
+        return redirect(url_for('index'))
+
+    user_top_songs, user_top_artists = get_user_top_songs_artists(user)
+    profile_picture = get_spotify_profile_picture(user)
+    
+    spotify_info = None
+    if user.spotify_access_token:
+        headers = {'Authorization': f'Bearer {spotify_access_token}'}
+        response = requests.get('https://api.spotify.com/v1/me/player/currently-playing', headers=headers)
+        if response.ok:
+            current_song_data = response.json().get('item')
+            if current_song_data:
+                current_song = {
+                    'name': current_song_data['name'],
+                    'artist': current_song_data['artists'][0]['name'],
+                    'cover': current_song_data['album']['images'][0]['url'] if current_song_data['album']['images'] else None,
+                    'timestamp': current_song_data.get('timestamp', 'N/A'),
+                    'end_time': current_song_data.get('end_time', 'N/A')
+                }
+                spotify_info = {
+                    'is_currently_listening': True,
+                    'current_song': current_song
+                }
+            else:
+                spotify_info = {
+                    'is_currently_listening': False
+                }
+
+    return render_template(
+        'user_profile.html',
+        user=user,
+        username=username,
+        top_songs=user_top_songs,
+        top_artists=user_top_artists,
+        profile_picture=profile_picture,
+        spotify_info=spotify_info
+    )
     
 @profile.route('/dashboard')
 @login_required
