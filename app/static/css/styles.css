@@ -190,8 +190,9 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
 /*will come back and make it work with all browsers and deviced, macbook looks a little weird and phones def arent right*/
 .image {
     opacity: 0;
-    width: 110px;
-    
+    width: 15vw; /* Scale width based on viewport width */
+    max-width: 110px; /* Maximum width limit */
+    min-width: 60px; /* Minimum width for visibility */
 }
 
 .anim-index-left .image {
@@ -235,21 +236,22 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
     }
 }
 
+
 #final-text {
     text-align: center;
     opacity: 0;
-    animation: fadeIn 2s forwards 2s; 
-    padding:125px;
-    font-size: 30px;
+    animation: fadeIn 2s forwards 2s;
+    padding: 3vw;
+    font-size: 3vw;
     background: radial-gradient(circle at bottom center, #cb97e0 10%, #7228EC 60%, #29073F 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent; 
     display: inline-block;
-    font-size: 2rem; 
     text-align: center;
 }
+
 #final-text h1{
     font-size: 75px;
 }
@@ -260,14 +262,52 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
 }
 html, body {
     height: 100%;
-    margin: 0; /* Remove default margin */
+    margin: 0;
 }
 
 .index-ani{
-    height: 100vh; /* Viewport height */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+@media only screen and (max-width: 599px) {
+    .image {
+        width: 25vw;
+    }
+    #final-text {
+        padding: 10vw;
+        font-size: 5vw;
+    }
+    #final-text h1 {
+        font-size: 8vw;
+    }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 991px) {
+    .image {
+        width: 20vw;
+    }
+    #final-text {
+        padding: 5vw;
+        font-size: 4vw;
+    }
+    #final-text h1 {
+        font-size: 6vw;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .image {
+        width: 15vw;
+    }
+    #final-text {
+        padding: 3vw;
+        font-size: 3vw;
+    }
+    #final-text h1 {
+        font-size: 5vw;
+    }
 }
 
 .login-button{
