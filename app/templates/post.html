@@ -5,7 +5,6 @@
 {% block content %}
 <div class="container mt-4">
 
-
     <div class="card mt-3 glass-card-nh">
         <h2 class="txt-pmain card-title">{{ post.title }}</h2>
         <h5 class="card-subtitle mb-2 text-muted">
@@ -29,7 +28,6 @@
             <hr>
             <p class="card-text">{{ post.content }}</p>
          
-            
             <!-- Like button and count -->
             <div class="like-container">
                 <button type="button" class="like-btn" onclick="toggleLike('{{ post.id }}', this)">
@@ -38,9 +36,6 @@
                 <span id="like-count-{{ post.id }}">{{ post.post_likes.count() }}</span>
             </div>
             
-            
-            
-    
             <hr>
             <h4>Comments</h4>
             {% for comment in comments %}
@@ -80,28 +75,25 @@
         </div>
     </div>
 
-
-
     <hr>
 
     <div class="mt-3">
+        <div class="card mt-3 glass-card-nh">
+            <div class="card-header">
+                Leave a Comment
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('community.view_post', post_id=post.id) }}" method="post">
+                    <div class="form-group">
+                        <label for="comment" class="form-label">Your Comment:</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-main">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>  
 
-    
-    <div class="card mt-3 glass-card-nh">
-        <div class="card-header">
-            Leave a Comment
-        </div>
-        <div class="card-body">
-            <form action="{{ url_for('community.view_post', post_id=post.id) }}" method="post">
-                <div class="form-group">
-                    <label for="comment" class="form-label">Your Comment:</label>
-                    <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-main">Submit</button>
-            </form>
-        </div>
-    </div>
-</div>  
 <script>
 function toggleLike(postId, button) {
     const iconElement = button.querySelector('i');
@@ -109,8 +101,7 @@ function toggleLike(postId, button) {
     fetch('/toggle_like/' + postId, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+            'Content-Type': 'application/json'
         }
     }).then(response => response.json())
     .then(data => {
@@ -128,7 +119,6 @@ function toggleLike(postId, button) {
         console.error('Fetch Error:', error);
     });
 }
+</script>  
 
-    </script>  
 {% endblock %}
-

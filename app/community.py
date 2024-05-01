@@ -28,7 +28,7 @@ def view_post(post_id):
     comments = Comment.query.filter_by(post_id=post_id).order_by(desc(Comment.date_posted)).all()
     song_details = None
     if post.spotify_song_id:
-        song_details = get_song_details(post.spotify_song_id)  # Fetch song details if available
+        song_details = get_song_details(post.spotify_song_id) 
 
     if request.method == 'POST':
         content = request.form['comment']
@@ -66,8 +66,20 @@ def delete_post(post_id):
         flash('You are not authorized to delete this post', 'error')
         return redirect(url_for('community.view_post', post_id=post_id))
     
+    # Delete likes associated with the post
+    likes = PostLike.query.filter_by(post_id=post_id).all()
+    for like in likes:
+        db.session.delete(like)
+    
+    # Delete comments associated with the post
+    comments = Comment.query.filter_by(post_id=post_id).all()
+    for comment in comments:
+        db.session.delete(comment)
+    
+    # Finally, delete the post itself
     db.session.delete(post)
     db.session.commit() 
+    
     flash('Post deleted successfully', 'success')
     return redirect(url_for('community.community_get'))
 
@@ -127,7 +139,7 @@ def toggle_like(post_id):
     if like:
         db.session.delete(like)
         db.session.commit()
-        liked = False  # Liked status after operation
+        liked = False  
         message = 'You have unliked the post.'
     else:
         like = PostLike(user_id=current_user.id, post_id=post_id)
