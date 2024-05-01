@@ -14,7 +14,9 @@
 <div class="card-body">
                 {% if song_details %}
         <div class="media mt-8">
-            <img src="{{ song_details.album_cover }}" class="align-self-start mr-3" alt="Album cover" style="width: 64px;">
+            <a href="https://open.spotify.com/track/{{ post.spotify_song_id }}" target="_blank">
+                <img src="{{ song_details.album_cover }}" class="align-self-start mr-3" alt="Album cover" style="width: 64px;">
+            </a>
             <div class="media-body">
                 <h5 class="mt-1">{{ song_details.name }}</h5>
                 {% for artist in song_details.artists %}
