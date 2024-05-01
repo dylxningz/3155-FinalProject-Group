@@ -4,6 +4,7 @@ from app.models import User
 import requests
 from db_secrets import CLIENT_ID, CLIENT_SECRET
 from app import db
+from flask_login import current_user
 
 def is_token_expired(user):
     utc = pytz.UTC
@@ -18,7 +19,7 @@ def refresh_spotify_token(user_id):
     user = User.query.get(user_id)
     if not user:
         raise ValueError("User not found")
-    if user.spotify_refresh_token:
+    if current_user.spotify_refresh_token:
         refresh_url = 'https://accounts.spotify.com/api/token'
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         data = {
@@ -136,3 +137,11 @@ def get_song_details(song_id):
         }
     else:
         response.raise_for_status()
+
+def get_user_recently_played_songs(user):
+    headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
+    if user.spotify_access_token:
+        response = requests.get(f'https://api.spotify.com/v1/me/player/recently-played?limit=30', headers=headers)
+        if response.status_code == 200:
+            recently_played = response.json()
+            return recently_played

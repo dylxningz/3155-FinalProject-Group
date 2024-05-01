@@ -27,7 +27,7 @@ spotify = oauth.register(
     access_token_url='https://accounts.spotify.com/api/token',
     authorize_url='https://accounts.spotify.com/authorize',
     api_base_url='https://api.spotify.com/v1/',
-    client_kwargs={'scope': 'user-read-email user-read-private user-top-read'}
+    client_kwargs={'scope': 'user-read-email user-read-private user-top-read user-read-recently-played'}
 )
 
 @login_manager.user_loader

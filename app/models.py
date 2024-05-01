@@ -21,40 +21,31 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
 
 class Song(db.Model):
     __tablename__ = 'song'
-    id = db.Column(db.Integer, primary_key=True)
-    spotify_song_id = db.Column(db.String(22), nullable=False)
-    num_streams = db.Column(db.Integer, nullable=False)
-    streams = db.relationship('Stream', backref='song', lazy=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    uri = db.Column(db.String(), nullable=False, unique=True)
+    name = db.Column(db.String(), nullable=False)
+    album = db.Column(db.String(),  nullable=False)
+    artist = db.Column(db.String(), nullable=False)
+
+    song_streams = db.relationship('Stream', backref='song-stream', lazy=True)
 
     def __repr__(self):
-        return '<Song %r>' % self.spotify_song_id
+        return '<Song %r>' % self.name  
+     
 
 class Stream(db.Model):
     __tablename__ = 'stream'
-    id = db.Column(db.Integer, db.ForeignKey('song.id'), primary_key=True)
-    spotify_song_id = db.Column(db.String(22))
-    time = db.Column(db.Float, nullable=False, unique=True)
-    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    song_id = db.Column(db.Integer, db.ForeignKey('song.id'))
+    time = db.Column(db.DateTime, nullable=False, unique=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True)
 
     def __repr__(self):
         return '<Stream %r>' % self.id
 
-class Artist(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-    albums = db.relationship('Album', backref='artist', lazy=True)
-
-    def __repr__(self):
-        return '<Artist %r>' % self.name
-
-class Album(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    release_date = db.Column(db.Date, nullable=False)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -63,7 +54,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    spotify_song_id = db.Column(db.String(22), nullable=True) 
+    spotify_song_id = db.Column(db.String(), nullable=True) 
     comments = db.relationship('Comment', backref='post', lazy=True, cascade="all, delete-orphan")
 
 class Comment(db.Model):
