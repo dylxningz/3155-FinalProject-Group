@@ -386,6 +386,9 @@ color: var(--color-main);
     margin-left: 20px; /* Adjust the margin as needed */
 }
 
+.searchbar-nav{
+    padding-left: 1vw;
+}
 
 
 /*form styling*/

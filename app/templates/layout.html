@@ -53,13 +53,7 @@
             </li>
 
             {% if current_user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('profile.dashboard') }}">Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('profile.habits') }}">Habits</a>
-            </li>
-            <div class="mb-3 d-flex">
+                        <div class="mb-3 d-flex searchbar-nav">
                 <form method="GET" action="{{ url_for('profile.search', username=search_result) }}" class="d-flex">
                     <div class="input-group">
                         <input type="text" name="search_query" class="form-control" placeholder="Search users..." value="{{ request.args.get('search', '') }}">
@@ -67,6 +61,13 @@
                     </div>
                 </form>
             </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile.dashboard') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile.habits') }}">Habits</a>
+            </li>
+
             {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
