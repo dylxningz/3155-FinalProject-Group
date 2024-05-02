@@ -388,6 +388,11 @@ color: var(--color-main);
 .searchbar-nav{
     padding-left: 1vw;
 }
+.spotify-info {
+    display: flex;         
+    align-items: center;   
+    gap: 10px;             
+}
 
 
 /*form styling*/

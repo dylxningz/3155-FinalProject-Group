@@ -10,7 +10,7 @@
             <div class="user-profile-box">
                 <img src="{{ profile_picture }}" class="profile-picture" alt="Profile Picture">
                 <h1>{{ username }}</h1>
-                <div>
+                <div class="spotify-info">
                     <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify Logo" class="account-icon-profile">
                     <h6>{{ user.spotify_id }}</h6>
                 </div>
