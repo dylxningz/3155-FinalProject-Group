@@ -14,7 +14,7 @@
                     <div>
                         <h5 class="mb-0">
                             {% if song['track']['name'] in user_top_songs|map(attribute='name') %}
-                                <span style="color: green">{{ song['track']['name'] }}</span>
+                                <span >{{ song['track']['name'] }}</span>
                             {% else %}
                                 {{ song['track']['name'] }}
                             {% endif %}
@@ -22,7 +22,7 @@
                         <p class="mb-0">by 
                             {% for artist in song['track']['artists'] %}
                                 {% if artist['name'] in user_top_artists|map(attribute='name') %}
-                                    <a href="/artist/{{ artist['id'] }}"><span style="color: blue">{{ artist['name'] }}</span></a>
+                                    <a href="/artist/{{ artist['id'] }}"><span>{{ artist['name'] }}</span></a>
                                 {% else %}
                                     <a href="/artist/{{ artist['id'] }}">{{ artist['name'] }}</a>
                                 {% endif %}

@@ -36,6 +36,11 @@ def view_post(post_id):
         song_details = get_song_details(post.spotify_song_id) 
 
     if request.method == 'POST':
+        if not current_user.is_authenticated:
+            flash('You must be logged in to post a comment.', 'warning')
+            return redirect(url_for('auth.login', next=request.url))
+        
+
         content = request.form['comment']
         comment = Comment(content=content, post_id=post_id, author_id=current_user.id)
         db.session.add(comment)
