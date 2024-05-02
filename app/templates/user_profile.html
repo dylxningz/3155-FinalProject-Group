@@ -17,7 +17,11 @@
                     <h3>About Me</h3>
                 </div>
                 <div class="row about-me-blurb">
-                    <p>{{ user.about_me }}</p>
+                    {% if user.about_me is none %}
+                        <p>{{ username }} has not written about themselves yet.</p>
+                    {% else %}
+                        <p>{{ user.about_me }}</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-md-4">
