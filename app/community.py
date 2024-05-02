@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
 from flask_login import login_required, current_user
 from app import db
 from app.models import Post, Comment, User, PostLike
 from app.forms import PostForm
 from sqlalchemy import desc
 from app.spotify_utils import get_song_details
+
 
 
 community = Blueprint('community', __name__)
@@ -24,7 +25,11 @@ def community_get():
 
 @community.route('/community/<post_id>', methods=['GET', 'POST'])
 def view_post(post_id):
-    post = Post.query.filter_by(id=post_id).first_or_404()
+    post = Post.query.filter_by(id=post_id).first()
+    if not post:
+ 
+        abort(404, description=f"There is no post with ID { post_id }.")
+
     comments = Comment.query.filter_by(post_id=post_id).order_by(desc(Comment.date_posted)).all()
     song_details = None
     if post.spotify_song_id:
@@ -61,7 +66,7 @@ def create_post():
 @community.route('/community/<post_id>/delete', methods=['POST'])
 @login_required
 def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id, description=f"There is no post with ID { post_id }.")
     if post.author_id != current_user.id:
         flash('You are not authorized to delete this post', 'error')
         return redirect(url_for('community.view_post', post_id=post_id))
@@ -86,7 +91,7 @@ def delete_post(post_id):
 @community.route('/community/<post_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
-    post = Post.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id, description=f"There is no post with ID { post_id }.")
     if post.author_id != current_user.id:
         flash('You are not authorized to edit this post', 'error')
         return redirect(url_for('community.view_post', post_id=post.id))
@@ -102,7 +107,7 @@ def edit_post(post_id):
 @community.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
+    comment = Comment.query.get_or_404(comment_id, description=f"There is no comment with ID { comment_id }.")
     if comment.author_id != current_user.id:
         flash('You are not authorized to delete this comment', 'error')
         return redirect(url_for('community.view_post', post_id=comment.post_id))
@@ -116,7 +121,7 @@ def delete_comment(comment_id):
 @community.route('/edit_comment/<int:comment_id>', methods=['GET', 'POST'])
 @login_required
 def edit_comment(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
+    comment = Comment.query.get_or_404(comment_id, description=f"There is no comment with ID { comment_id }.")
     if comment.author_id != current_user.id:
         flash('You are not authorized to edit this comment', 'error')
         return redirect(url_for('community.view_post', post_id=comment.post_id))

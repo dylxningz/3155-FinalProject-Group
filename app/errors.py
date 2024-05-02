@@ -4,7 +4,7 @@ errors = Blueprint('errors', __name__)
 
 @errors.app_errorhandler(404)
 def page_not_found(error):
-    return render_template('error.html', error_status=404, error_message="Page not found"), 404
+    return render_template('error.html', error_status=404, error_message=error.description or "Page not found"), 404
 
 @errors.app_errorhandler(500)
 def internal_error(error):

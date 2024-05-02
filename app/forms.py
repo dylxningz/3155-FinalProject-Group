@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, Length, Email, ValidationError
 import psycopg2
 
 
-
 class SignupForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])

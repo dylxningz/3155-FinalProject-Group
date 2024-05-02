@@ -113,7 +113,7 @@ def spotify_search_tracks(query):
 @login_required
 def recently_played():
     recently_played = get_user_recently_played_songs(current_user)
-    print("Recently Played:", recently_played)  # Log fetched data
+    print("Recently Played:", recently_played)  
     items = recently_played['items']
 
     for item in items:

@@ -1,8 +1,15 @@
 {% extends 'layout.html' %}
 
-{% block title %}Error{% endblock %}
-
 {% block content %}
-<h1>Error {{ error_status }}</h1>
-<p>{{ error_message }}</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mt-5">
+                <h1 class="display-1 top-txt">Error {{ error_status }}</h1>
+                <p class="lead">{{ error_message }}</p>
+                
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
