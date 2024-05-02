@@ -365,6 +365,9 @@ color: var(--color-main);
 .navbar-toggler {
     border-color: #fff !important; 
 }
+.navbar-nav{
+    padding-left: 29vw;
+}
 
 
 /*form styling*/
