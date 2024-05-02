@@ -55,6 +55,14 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('profile.habits') }}">Habits</a>
             </li>
+            <div class="mb-3 d-flex">
+                <form method="GET" action="{{ url_for('profile.search', username=search_result) }}" class="d-flex">
+                    <div class="input-group">
+                        <input type="text" name="search_query" class="form-control" placeholder="Search users..." value="{{ request.args.get('search', '') }}">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
             {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">

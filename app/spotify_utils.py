@@ -131,6 +131,42 @@ def get_spotify_profile_picture(user):
             return profile_picture_url
     return None
 
+def get_current_track_info(user):
+    headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
+    response = requests.get('https://api.spotify.com/v1/me/player', headers=headers)
+    if response.status_code == 200:
+        resp_json = response.json()
+        if 'item' in resp_json:
+            item = resp_json.get('item')
+            track_id = item.get('id')
+            track_name = item.get('name')
+
+            # Extracting artists' names
+            artists = item.get('artists', [])
+            artists_name = ', '.join([artist['name'] for artist in artists])
+
+            # Extracting external URL for the track
+            track_link = item.get('external_urls', {}).get('spotify')
+
+            # Creating a dictionary with the extracted information
+            current_track_info = {
+                'id': track_id,
+                'name': track_name,
+                'artists': artists_name,
+                'link': track_link
+            }
+    else:
+        track_idDef = "None"
+        track_nameDef = "No Track Playing"
+        artists_nameDef = "No Artist Playing"
+        track_linkDef = "No Link"
+        current_track_info = {
+            'id': track_idDef,
+            'name': track_nameDef,
+            'artists': artists_nameDef,
+            'link': track_linkDef
+        }
+
 def get_client_credentials_token():
     client_id = CLIENT_ID
     client_secret = CLIENT_SECRET
