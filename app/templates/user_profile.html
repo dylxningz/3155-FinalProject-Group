@@ -3,92 +3,101 @@
 {% block title %}{{ username }}'s Profile{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <!-- User Profile Container -->
-            <div class="user-profile-cnt box-main-4">
-                <h2>{{ username }}'s Profile</h2>
-                <div class="profile-picture-cnt box-main-1">
-                    {% if profile_picture %}
-                        <img class="img-fluid rounded-circle" src="{{ profile_picture }}" alt="Profile Picture">
+    <div class="profile-container">
+        <div class="row">
+            <div class="user-profile-box col-md-6">
+                <!-- User Profile Container -->
+                <img src="{{ profile_picture }}" class="profile-picture" alt="Profile Picture">
+                <h1>{{ username }}</h1>
+                <div class="row">
+                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify Logo" class="account-icon-profile">
+                    <h6>{{ user.spotify_id }}</h6>
+                </div>
+                <div class="row">
+                    <h3>About Me</h3>
+                </div>
+                <div class="row about-me-blurb">
+                    {% if user.about_me is none %}
+                        <p>{{ username }} has not written about themselves yet.</p>
+                    {% else %}
+                        <p>{{ user.about_me }}</p>
                     {% endif %}
                 </div>
-                <h6>Email: {{ user.email }}</h6>
-                {% if spotify_info %}
-                    <div class="spotify-info-section">
-                        <h3>Spotify Information</h3>
-                        {% if spotify_info.is_currently_listening %}
-                            <p>Currently Listening:</p>
-                            <p>Song: {{ spotify_info.current_song.name }}</p>
-                            <p>Artist: {{ spotify_info.current_song.artist }}</p>
-                            <img src="{{ spotify_info.current_song.cover }}" alt="Song Cover" style="height: 100px; width: 100px;">
-                            <p>Timestamp: {{ spotify_info.current_song.timestamp }}</p>
-                            <p>End Time: {{ spotify_info.current_song.end_time }}</p>
+            </div>
+            <div class="col-md-4">
+                <!-- Top Songs and Top Artists Container -->
+                <div class="row">
+                    <div class="col-md-12 top-songs-cnt box-main-1">
+                        <h3>{{ username }}'s Top 5 Songs:</h3>
+                        {% if top_songs %}
+                            <ul class="list-unstyled">
+                                {% for song in top_songs %}
+                                    <li>
+                                        <div class="media">
+                                            <span class="rank">{{ song.rank }}.</span>
+                                            {% if song.cover %}
+                                                <img src="{{ song.cover }}" alt="{{ song.name }}" style="height: 100px; width: 100px;">
+                                            {% endif %}
+                                            <div class="media-body">
+                                                <h5 class="mt-0">{{ song.name }}</h5>
+                                                {% for artist in song.artists %}
+                                                    <a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         {% else %}
-                            <p>Not currently listening to any song.</p>
+                            <p>You have no top songs from Spotify to display, or your Spotify account is not linked.</p>
                         {% endif %}
                     </div>
-                {% else %}
-                    <p>Not on Spotify.</p>
-                {% endif %}
-
-            </div>
-        </div>
-        <div class="col-md-4">
-            <!-- Top Songs and Top Artists Container -->
-            <div class="row">
-                <div class="col-md-12 top-songs-cnt box-main-1">
-                    <h3>{{ username }}'s Top 5 Songs:</h3>
-                    {% if top_songs %}
-                        <ul class="list-unstyled">
-                            {% for song in top_songs %}
-                                <li>
-                                    <div class="media">
-                                        <span class="rank">{{ song.rank }}.</span>
-                                        {% if song.cover %}
-                                            <img src="{{ song.cover }}" alt="{{ song.name }}" style="height: 100px; width: 100px;">
-                                        {% endif %}
-                                        <div class="media-body">
-                                            <h5 class="mt-0">{{ song.name }}</h5>
-                                            {% for artist in song.artists %}
-                                                <a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a>{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
+                    <div class="col-md-12 top-artist-cnt box-main-2">
+                        <h3>{{ username }}'s Top 5 Artists:</h3>
+                        {% if top_artists %}
+                            <ul class="list-unstyled">
+                                {% for artist in top_artists %}
+                                    <li>
+                                        <div class="media">
+                                            <span class="rank">{{ artist.rank }}.</span>
+                                            {% if artist.cover %}
+                                                <img src="{{ artist.cover }}" alt="{{ artist.name }}" style="height: 100px; width: 100px;">
+                                            {% endif %}
+                                            <div class="media-body">
+                                                <h5 class="mt-0"><a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a></h5>
+                                                <p>Genres: {{ artist.genre }}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>You have no top songs from Spotify to display, or your Spotify account is not linked.</p>
-                    {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>You have no top artists from Spotify to display, or your Spotify account is not linked.</p>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="col-md-12 top-artist-cnt box-main-2">
-                    <h3>{{ username }}'s Top 5 Artists:</h3>
-                    {% if top_artists %}
-                        <ul class="list-unstyled">
-                            {% for artist in top_artists %}
-                                <li>
-                                    <div class="media">
-                                        <span class="rank">{{ artist.rank }}.</span>
-                                        {% if artist.cover %}
-                                            <img src="{{ artist.cover }}" alt="{{ artist.name }}" style="height: 100px; width: 100px;">
-                                        {% endif %}
-                                        <div class="media-body">
-                                            <h5 class="mt-0"><a href="{{ url_for('spotifyroutes.artist_page', artist_id=artist.id) }}">{{ artist.name }}</a></h5>
-                                            <p>Genres: {{ artist.genre }}</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>You have no top artists from Spotify to display, or your Spotify account is not linked.</p>
-                    {% endif %}
+            </div>
+            <div class="col-md-6">
+                <!-- Recent Posts Container -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h3>{{ username }}'s Recent Posts:</h3>
+                        {% for post in recent_posts %}
+                            <div class="glass-card-nh card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="stretched-link">
+                                        {{ post.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text">{{ post.content }}</p>
+                                    <p class="card-text"><small class="text-muted">Posted by: {{ post.author.username }}</small></p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
 {% endblock %}

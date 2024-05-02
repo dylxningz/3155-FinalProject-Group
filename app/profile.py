@@ -2,41 +2,26 @@ from flask import Blueprint, render_template
 from app.models import User, Post , Song, Stream, PostLike
 from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_picture
 import requests
+from app.models import User, Post
+from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_picture, get_current_track_info
 from flask import flash, redirect, url_for
 from flask_login import current_user, login_required
 from app.spotify_utils import get_spotify_access_token, get_user_recently_played_songs
 from app import db
 from sqlalchemy import func, distinct
+from flask import request
+import re
 
 profile = Blueprint('profile', __name__)
 
 @profile.route('/users/<username>')
 def user_profile(username):
     user = User.query.filter_by(username=username).first()
-    user_top_songs, user_top_artists = get_user_top_songs_artists(user)
-    profile_picture = get_spotify_profile_picture(user)
-    spotify_info = None
-    if user and user.spotify_access_token:
-        headers = {'Authorization': f'Bearer {user.spotify_access_token}'}
-        response = requests.get('https://api.spotify.com/v1/me/player/currently-playing', headers=headers)
-        current_song_data = response.json().get('item')
-        if current_song_data:
-            current_song = {
-                'name': current_song_data['name'],
-                'artist': current_song_data['artists'][0]['name'],
-                'cover': current_song_data['album']['images'][0]['url'] if current_song_data['album']['images'] else None,
-                'timestamp': current_song_data['timestamp'],
-                'end_time': current_song_data['end_time']
-            }
-            spotify_info = {
-                'is_currently_listening': True,
-                'current_song': current_song
-            }
-        else:
-            spotify_info = {
-                'is_currently_listening': False
-            }
     if user:
+        user_top_songs, user_top_artists = get_user_top_songs_artists(user)
+        profile_picture = get_spotify_profile_picture(user)
+        recent_posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).limit(3).all()
+
         return render_template(
             'user_profile.html',
             user=user,
@@ -44,10 +29,11 @@ def user_profile(username):
             top_songs=user_top_songs,
             top_artists=user_top_artists,
             profile_picture=profile_picture,
-            spotify_info=spotify_info)
+            recent_posts=recent_posts
+        )
     else:
         flash('User not found.', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('profile.dashboard'))
     
 @profile.route('/dashboard')
 @login_required
@@ -81,7 +67,7 @@ def dashboard():
 def habits():
     top_songs = get_top_songs(current_user.id)
     top_artists = get_top_artists(current_user.id)
-    
+
     return render_template('habits.html', top_songs=top_songs, top_artists=top_artists)
 
 def get_top_songs(user_id):
@@ -120,3 +106,40 @@ def get_top_artists(user_id):
 @login_required
 def settings():
     return render_template('settings.html')
+
+
+@profile.route('/search', methods=['GET'])
+def search():
+    search_query = request.args.get('search_query')
+    if search_query:
+        matching_user = User.query.filter(
+            (User.username.ilike(f'%{search_query}%')) |
+            (User.email.ilike(f'%{search_query}%')) |
+            (User.spotify_id.ilike(f'%{search_query}%'))
+        ).first()
+
+        if matching_user:
+            return redirect(url_for('profile.user_profile', username=matching_user.username))
+
+    flash('User not found.', 'error')
+    return redirect(url_for('profile.user_profile', username='current_user.username'))
+
+@profile.route('/users/', methods=['GET'])
+def users_search():
+    request_path = request.path
+    match = re.match(r"/users/\?search_query=(\w+)", request_path)
+    if match:
+        search_query = match.group(1)
+        return redirect(url_for('profile.user_profile', username=search_query))
+
+    flash('Invalid search query.', 'error')
+    return redirect(url_for('profile.user_profile', username='current_user.username'))
+
+@profile.route('/update_about_me', methods=['POST'])
+@login_required
+def update_about_me():
+    about_me = request.form.get('about_me')
+    current_user.about_me = about_me
+    db.session.commit()
+    flash('About Me updated successfully.', 'success')
+    return redirect(url_for('profile.settings'))

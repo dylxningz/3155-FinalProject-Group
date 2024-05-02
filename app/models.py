@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     spotify_access_token = db.Column(db.String(255), nullable=True)
     spotify_refresh_token = db.Column(db.String(255), nullable=True)
     token_expiry = Column(DateTime(timezone=True), nullable=True)
+    about_me = db.Column(db.Text, nullable=True)
 
     posts = db.relationship('Post', backref='author', lazy=True)
     streams = db.relationship('Stream', backref='streamer', lazy=True)
