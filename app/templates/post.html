@@ -113,7 +113,8 @@ function toggleLike(postId, button) {
             iconElement.classList.add('fa-heart', 'fas');      
         } else {
             iconElement.classList.remove('fa-heart', 'fas');  
-            iconElement.classList.add('fa-heart-o', 'far');   
+            iconElement.classList.add('fa-heart-o', 'far');  
+            window.location.reload(true); 
         }
     }).catch(error => {
         console.error('Fetch Error:', error);
