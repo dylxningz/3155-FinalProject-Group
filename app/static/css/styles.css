@@ -133,6 +133,10 @@ background: linear-gradient(135deg, #B849FA, #3B2D8E);
 }
 
 .box-main-4{
+    display: flex;             
+    flex-direction: column;    
+    justify-content: center;   
+    text-align: center;        
     color: white;
     padding: 30px;
     border-radius: 10px;
