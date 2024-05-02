@@ -41,9 +41,13 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+
+
             <li class="nav-item active">
                 <a class="nav-link" href="{{ url_for('spotifyroutes.top_songs') }}">Top Songs <span class="sr-only">(current)</span></a>
             </li>
+
+
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('community.community_get') }}">Community</a>
             </li>
@@ -59,7 +63,7 @@
                 <form method="GET" action="{{ url_for('profile.search', username=search_result) }}" class="d-flex">
                     <div class="input-group">
                         <input type="text" name="search_query" class="form-control" placeholder="Search users..." value="{{ request.args.get('search', '') }}">
-                        <button type="submit" class="btn btn-secondary">Search</button>
+                        <button type="submit" class="btn btn-main">Search</button>
                     </div>
                 </form>
             </div>
@@ -73,10 +77,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right account-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{{ url_for('profile.user_profile', username=current_user.username) }}">Profile</a>
-                    <a class="dropdown-item" href="#">+ New Post</a>
-                    <a class="dropdown-item" href="{{ url_for('profile.settings')}}">Settings</a>
+                    <a class="dropdown-item" href="{{ url_for('community.create_post') }}">+ New Post</a>
+                    <a class="dropdown-item" href="{{ url_for('profile.habits') }}">Habits</a>
                     <a class="dropdown-item" href="{{ url_for('profile.dashboard')}}">Dashboard</a>
                     <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('profile.settings')}}">Settings</a>
                     <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
                 </div>
             </li>

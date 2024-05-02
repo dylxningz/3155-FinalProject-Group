@@ -374,6 +374,7 @@ color: var(--color-main);
 .navbar-nav{
     display: flex;
     align-items: center;
+    padding-left: 15vw;
 }
 
 .navbar-nav .nav-item {
@@ -606,7 +607,7 @@ hr{
     position: fixed;
     top: 20%;
     left: 50%;
-    transform: translate(-50%, -300%);
+    transform: translate(-50%, -150%);
     z-index: 9999;
     width: auto;
     padding: 0 20px;

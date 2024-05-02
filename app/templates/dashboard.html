@@ -7,22 +7,6 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
-            <div class="sidebar">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('profile.dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('profile.habits')}}">Habits</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('profile.settings') }}">Settings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-                    </li>
-                </ul>
-            </div>
         </div>
     <h2 class="dashboard-top-txt">Welcome to Your Dashboard, {{ username }}!</h2>
 <div class="container">
