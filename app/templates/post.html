@@ -31,10 +31,11 @@
             <!-- Like button and count -->
             <div class="like-container">
                 <button type="button" class="like-btn" onclick="toggleLike('{{ post.id }}', this)">
-                    <i class="fa{{ 's fa-heart' if current_user.has_liked_post(post) else 'r fa-heart' }} like-icon" data-post-id="{{ post.id }}"></i>
+                    <i class="fa{{ 's fa-heart' if current_user.is_authenticated and current_user.has_liked_post(post) else 'r fa-heart' }} like-icon" data-post-id="{{ post.id }}"></i>
                 </button>
                 <span id="like-count-{{ post.id }}">{{ post.post_likes.count() }}</span>
             </div>
+            
             
             <hr>
             <h4>Comments</h4>

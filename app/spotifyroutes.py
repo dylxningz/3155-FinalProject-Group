@@ -60,21 +60,26 @@ def artist_page(artist_id):
         return redirect(url_for('spotifyroutes.index'))
 
 @spotifyroutes.route('/top-songs')
-@login_required
 def top_songs():
     try:
         access_token = get_client_credentials_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbLRQDuF5jeBp/tracks', headers=headers)
+        
         if response.status_code == 200:
             top_songs = response.json()['items'][:50]  # Limit to top 50 songs
-            user_top_songs, user_top_artists = get_user_top_songs_artists(current_user)
-            return render_template('spotify/top_songs.html', top_songs=top_songs, user_top_songs=user_top_songs, user_top_artists=user_top_artists)
+
+            if current_user.is_authenticated:  # Check if user is logged in
+                user_top_songs, user_top_artists = get_user_top_songs_artists(current_user)
+                return render_template('spotify/top_songs.html', top_songs=top_songs, user_top_songs=user_top_songs, user_top_artists=user_top_artists)
+            else:
+                return render_template('spotify/top_songs.html', top_songs=top_songs, user_top_songs=None, user_top_artists=None)
         else:
             flash('Failed to fetch top songs from Spotify.', 'error')
             return redirect(url_for('spotifyroutes.index'))
     except Exception as e:
         flash(str(e), 'error')
+        return redirect(url_for('spotifyroutes.index')) 
 
 @spotifyroutes.route('/spotify/search')
 def spotify_search():
