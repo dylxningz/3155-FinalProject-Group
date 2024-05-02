@@ -80,14 +80,44 @@
             {% endif %}
         </div>
 
-        <div class="row mt-4">
-            <h3 class="col-12">Your Posts:</h3>
+        <div class="col-md-5 box-main-3">
+            <h3>Recently Played Songs:</h3>
+            {% if recently_played_songs %}
+                <ul class="list-unstyled">
+                    {% for song in recently_played_songs %}
+                        <li class="media">
+                            <a href="https://open.spotify.com/track/{{ song.id }}" target="_blank">  <!-- Added link to Spotify track -->
+                                <img src="{{ song.album_image }}" class="mr-3" alt="Album cover" style="width:64px; height:64px;">
+                            </a>
+                            <div class="media-body">
+                                <small>Played at: {{ song.played_at }}</small>
+                                <h5 class="mt-0">{{ song.name }}</h5>
+                                <p>{{ song.artist }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You have no recently played songs to display.</p>
+            {% endif %}
+        </div>
+        
+
+        <div class="col-md-5 box-main-4">
+
+        </div>
+        
+        <div class="container">
+            <h3 class="mt-4">Your Posts:</h3>
             {% if user_posts %}
+                <div class="row mt-4">
                 {% for post in user_posts %}
+                    {% if loop.index0 is divisibleby 4 and not loop.first %}
+                        </div><div class="row mt-4">
+                    {% endif %}
                     <div class="col-md-3 post-column">
-                        <!-- Entire card as a link -->
                         <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="text-decoration-none">
-                            <div class="card mb-4 glass-card-light">
+                            <div class="card mb-4 community-card glass-card-light">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ post.title }}</h5>
                                     <p class="card-text">{{ post.content | truncate(50) }}</p>
@@ -97,18 +127,20 @@
                         </a>
                     </div>
                 {% endfor %}
-            {% else %}
-                <div class="col-12">
-                    <p class="text-muted">You have not created any posts yet.</p>
                 </div>
+            {% else %}
+                <p class="text-muted">You have not created any posts yet.</p>
             {% endif %}
-        </div>
-        
+    
 
-        <div class="row mt-4">
-            <h3 class="col-12">Posts You've Liked:</h3>
+        
+            <h3 class="mt-4">Posts You've Liked:</h3>
             {% if liked_posts %}
+                <div class="row mt-4">
                 {% for post in liked_posts %}
+                    {% if loop.index0 is divisibleby 4 and not loop.first %}
+                        </div><div class="row mt-4">
+                    {% endif %}
                     <div class="col-md-3 post-column">
                         <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="text-decoration-none">
                             <div class="card mb-4 glass-card-light">
@@ -121,12 +153,12 @@
                         </a>
                     </div>
                 {% endfor %}
-            {% else %}
-                <div class="col-12">
-                    <p class="text-muted">You haven't liked any posts yet.</p>
                 </div>
+            {% else %}
+                <p class="text-muted">You haven't liked any posts yet.</p>
             {% endif %}
         </div>
+        
         
         
         

@@ -52,6 +52,10 @@ def update_recently_played_songs(user):
             track = item['track']
             album = track['album']
             artist = track['album']['artists'][0]
+            # Extract track ID from URI for potential use
+            uri_parts = track['uri'].split(':')
+            track_id = uri_parts[2] if len(uri_parts) > 2 else None
+
             new_song = Song(uri=track['uri'], name=track['name'], album=album['name'], artist=artist['name'])
             new_stream = Stream(time=item['played_at'], user_id=user.id)
 
@@ -63,7 +67,7 @@ def update_recently_played_songs(user):
                     db.session.commit()
                 except IntegrityError:
                     db.session.rollback()
-            
+
             # Attach song_id to new_stream
             existing_song = existing_song or Song.query.filter_by(uri=track['uri']).first()
             new_stream.song_id = existing_song.id
@@ -72,6 +76,8 @@ def update_recently_played_songs(user):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
+
+            
 
 def get_spotify_access_token(user):
     if is_token_expired(user):

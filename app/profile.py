@@ -4,7 +4,7 @@ from app.spotify_utils import get_user_top_songs_artists, get_spotify_profile_pi
 import requests
 from flask import flash, redirect, url_for
 from flask_login import current_user, login_required
-from app.spotify_utils import get_spotify_access_token
+from app.spotify_utils import get_spotify_access_token, get_user_recently_played_songs
 from app import db
 from sqlalchemy import func, distinct
 
@@ -54,10 +54,26 @@ def user_profile(username):
 def dashboard():
     access_token = get_spotify_access_token(current_user)
     top_songs, top_artists = get_user_top_songs_artists(current_user)
-    user_posts = Post.query.filter_by(author_id=current_user.id).order_by(Post.date_posted.desc()).all()  # Fetching posts
+    user_posts = Post.query.filter_by(author_id=current_user.id).order_by(Post.date_posted.desc()).all()
     liked_posts = Post.query.join(PostLike, (PostLike.post_id == Post.id)).filter(PostLike.user_id == current_user.id).all()
-    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists, user_posts=user_posts, liked_posts=liked_posts)
+    recently_played_data = get_user_recently_played_songs(current_user)
 
+    recently_played_songs = []
+    if recently_played_data and 'items' in recently_played_data:
+        for item in recently_played_data['items'][:5]:  # Limit to the last 5 songs
+            track = item['track']
+            track_id = track['uri'].split(':')[2]  # Extract the Spotify track ID from the URI
+            song = {
+                'id': track_id,  # Include the Spotify track ID
+                'name': track['name'],
+                'artist': ', '.join(artist['name'] for artist in track['artists']),
+                'album_image': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                'played_at': item['played_at']
+            }
+            recently_played_songs.append(song)
+
+    return render_template('dashboard.html', username=current_user.username, top_songs=top_songs, top_artists=top_artists,
+                           user_posts=user_posts, liked_posts=liked_posts, recently_played_songs=recently_played_songs)
 
 
 @profile.route('/habits')
