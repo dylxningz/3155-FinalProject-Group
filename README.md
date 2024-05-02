@@ -1,6 +1,14 @@
 # 3155-FinalProject-Group
 
-Install a new dependency?
-put " pip freeze > requirement.txt " in the terminal before you commit to make sure every can easily get the right dependency!!
+Syphony Sonar
 
-LOGIN/SIGN up set up, probably needs tweaking
+A music platorm that allows you to link your spotify and then see your habits along with share them 
+
+A community to share all info about music and even link a song to a post to talk about 
+
+____________ YOUR ACCOUNT MUST BE PREMIUM AND PREAUTHOURIZED FOR OUT PLATFORM TO SEE YOUR ACCOUNT _____________________
+
+
+Andre, Akhil, Authur, Dylan, Joesph and Ryan 
+
+symphonysonar copyright 2024
