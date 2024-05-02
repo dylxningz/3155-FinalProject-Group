@@ -41,6 +41,17 @@
         </div>
         <div class="col-md-6">
             <div class="box-main-1">
+                <h2 style="text-align: center;">Link Account</h2>
+                <a href="{{ url_for('spotifyroutes.login_spotify') }}" class="box-acc-1 d-flex align-items-center">
+                    <span class="mr-2">Spotify Account</span>
+                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo">
+                </a>   
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="box-main-1">
                 <h2 style="text-align: center;">Change Password</h2>
                 <hr>
                 <form action="{{ url_for('auth.change_password') }}" method="post">
@@ -58,15 +69,19 @@
                 </form>
             </div>
         </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6">
             <div class="box-main-1">
-                <h2 style="text-align: center;">Link Account</h2>
-                <a href="{{ url_for('spotifyroutes.login_spotify') }}" class="box-acc-1 d-flex align-items-center">
-                    <span class="mr-2">Spotify Account</span>
-                    <img src="{{ url_for('static', filename='images/logos/spotify-lg.png') }}" alt="Spotify logo">
-                </a>   
+                <h2 style="text-align: center;">Delete Account</h2>
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form action="{{ url_for('auth.delete_account') }}" method="post">
+                    <div class="form-group">
+                        <label for="confirm_delete">Confirm Deletion (type 'yes' to confirm):</label>
+                        <input type="text" class="form-control white" id="confirm_delete" name="confirm_delete" placeholder="Type 'yes' to confirm">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-danger btn-main">Delete Account</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
