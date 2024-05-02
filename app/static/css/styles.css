@@ -354,7 +354,6 @@ html, body {
 .navbar{
 background-color: var(--color-background);
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
