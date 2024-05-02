@@ -4,6 +4,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app import db
 from app.forms import LoginForm, SignupForm
 from app.models import User
+from app.community import Post, Comment, PostLike
 
 auth = Blueprint('auth', __name__)
 
@@ -58,10 +59,6 @@ def change_password():
     return redirect(url_for('profile.settings'))
 
 
-
-
-
-
 @auth.route('/change_username', methods=['POST'])
 @login_required
 def change_username():
@@ -79,6 +76,12 @@ def change_username():
 def delete_account():
     if request.form.get('confirm_delete') == 'yes':
         try:
+            Post.query.filter_by(author_id=current_user.id).delete()
+        
+            Comment.query.filter_by(author_id=current_user.id).delete()
+        
+            PostLike.query.filter_by(user_id=current_user.id).delete()
+
             db.session.delete(current_user)
             db.session.commit()
             flash('Your account has been successfully deleted.', 'success')
